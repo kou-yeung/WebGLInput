@@ -1,9 +1,9 @@
 var WebGLInput = {
     $instances: [],
 
-    WebGLInputCreate: function (x, y, width, height, fontsize, text) {
+    WebGLInputCreate: function (x, y, width, height, fontsize, text, isMultiLine) {
         var gameContainer = document.getElementById("gameContainer");
-        var input = document.createElement("input");
+        var input = document.createElement(isMultiLine?"textarea":"input");
         input.style.position = "absolute";
         input.style.top = y + "px";
         input.style.left = x + "px";
@@ -21,6 +21,20 @@ var WebGLInput = {
 		input.setSelectionRange(0, input.value.length);
         gameContainer.appendChild(input);
         return instances.push(input) - 1;
+    },
+	WebGLInputEnterSubmit: function(id, falg){
+		var input = instances[id];
+		if(falg){
+			input.onkeydown = function(e){
+				if ((e.which && e.which === 13) || (e.keyCode && e.keyCode === 13)) {
+					input.blur();
+					return false;
+				}
+				return true;
+			};
+		} else {
+			input.onkeydown = null;
+		}
     },
 	WebGLInputFocus: function(id){
 		var input = instances[id];

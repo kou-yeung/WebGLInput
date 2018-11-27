@@ -13,7 +13,10 @@ namespace WebGLSupport
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
         [DllImport("__Internal")]
-        public static extern int WebGLInputCreate(int x, int y, int width, int height, int fontsize, string text);
+        public static extern int WebGLInputCreate(int x, int y, int width, int height, int fontsize, string text, bool isMultiLine);
+
+        [DllImport("__Internal")]
+        public static extern void WebGLInputEnterSubmit(int id, bool flag);
 
         [DllImport("__Internal")]
         public static extern void WebGLInputFocus(int id);
@@ -51,7 +54,8 @@ namespace WebGLSupport
         [DllImport("__Internal")]
         public static extern void WebGLInputDelete(int id);
 #else
-        public static int WebGLInputCreate(int x, int y, int width, int height, int fontsize, string text) { return 0; }
+        public static int WebGLInputCreate(int x, int y, int width, int height, int fontsize, string text, bool isMultiLine) { return 0; }
+        public static void WebGLInputEnterSubmit(int id, bool flag) { }
         public static void WebGLInputFocus(int id) { }
         public static void WebGLInputOnFocus(int id, Action<int> cb) { }
         public static void WebGLInputOnBlur(int id, Action<int> cb) { }
@@ -95,10 +99,10 @@ namespace WebGLSupport
             //var y = (int)(Screen.height - (rect.y + rect.height));
             //id = WebGLInputPlugin.WebGLInputCreate(x, y, (int)rect.width, (int)rect.height, input.textComponent.fontSize, input.text);
             var y = (int)(Screen.height - (rect.y));
-            id = WebGLInputPlugin.WebGLInputCreate(x, y, (int)rect.width, (int)1, input.textComponent.fontSize, input.text);
+            id = WebGLInputPlugin.WebGLInputCreate(x, y, (int)rect.width, (int)1, input.textComponent.fontSize, input.text, input.lineType != InputField.LineType.SingleLine);
 
             instances[id] = input;
-
+            WebGLInputPlugin.WebGLInputEnterSubmit(id, input.lineType != InputField.LineType.MultiLineNewline);
             WebGLInputPlugin.WebGLInputOnFocus(id, OnFocus);
             WebGLInputPlugin.WebGLInputOnBlur(id, OnBlur);
             WebGLInputPlugin.WebGLInputOnValueChange(id, OnValueChange);
@@ -142,12 +146,23 @@ namespace WebGLSupport
         [MonoPInvokeCallback(typeof(Action<int, string>))]
         static void OnValueChange(int id, string value)
         {
-            var index = instances[id].caretPosition;
-            instances[id].text = value;
-            // InputField の ContentType による整形したテキストを HTML の input に再設定します
-            if (value != instances[id].text)
+            var input = instances[id];
+            var index = input.caretPosition;
+            input.text = value;
+
+            // InputField.ContentType.Name が Name の場合、先頭文字が強制的大文字になるため小文字にして比べる
+            if (input.contentType == InputField.ContentType.Name)
             {
-                WebGLInputPlugin.WebGLInputText(id, instances[id].text);
+                if (string.Compare(input.text, value, true) == 0)
+                {
+                    value = input.text;
+                }
+            }
+
+            // InputField の ContentType による整形したテキストを HTML の input に再設定します
+            if (value != input.text)
+            {
+                WebGLInputPlugin.WebGLInputText(id, input.text);
                 WebGLInputPlugin.WebGLInputSetSelectionRange(id, index, index);
             }
         }
