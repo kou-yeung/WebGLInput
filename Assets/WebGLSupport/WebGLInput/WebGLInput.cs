@@ -13,7 +13,7 @@ namespace WebGLSupport
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
         [DllImport("__Internal")]
-        public static extern int WebGLInputCreate(int x, int y, int width, int height, int fontsize, string text, bool isMultiLine);
+        public static extern int WebGLInputCreate(int x, int y, int width, int height, int fontsize, string text, bool isMultiLine, bool isPassword);
 
         [DllImport("__Internal")]
         public static extern void WebGLInputEnterSubmit(int id, bool flag);
@@ -54,7 +54,7 @@ namespace WebGLSupport
         [DllImport("__Internal")]
         public static extern void WebGLInputDelete(int id);
 #else
-        public static int WebGLInputCreate(int x, int y, int width, int height, int fontsize, string text, bool isMultiLine) { return 0; }
+        public static int WebGLInputCreate(int x, int y, int width, int height, int fontsize, string text, bool isMultiLine, bool isPassword) { return 0; }
         public static void WebGLInputEnterSubmit(int id, bool flag) { }
         public static void WebGLInputFocus(int id) { }
         public static void WebGLInputOnFocus(int id, Action<int> cb) { }
@@ -94,12 +94,13 @@ namespace WebGLSupport
         public void OnSelect(/*BaseEventData eventData*/)
         {
             var rect = GetScreenCoordinates(input.textComponent.GetComponent<RectTransform>());
+            bool isPassword = input.contentType == InputField.ContentType.Password;
 
             var x = (int)(rect.x);
             //var y = (int)(Screen.height - (rect.y + rect.height));
             //id = WebGLInputPlugin.WebGLInputCreate(x, y, (int)rect.width, (int)rect.height, input.textComponent.fontSize, input.text);
             var y = (int)(Screen.height - (rect.y));
-            id = WebGLInputPlugin.WebGLInputCreate(x, y, (int)rect.width, (int)1, input.textComponent.fontSize, input.text, input.lineType != InputField.LineType.SingleLine);
+            id = WebGLInputPlugin.WebGLInputCreate(x, y, (int)rect.width, (int)1, input.textComponent.fontSize, input.text, input.lineType != InputField.LineType.SingleLine, isPassword);
 
             instances[id] = input;
             WebGLInputPlugin.WebGLInputEnterSubmit(id, input.lineType != InputField.LineType.MultiLineNewline);

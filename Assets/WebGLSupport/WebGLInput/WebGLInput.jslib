@@ -1,7 +1,7 @@
 var WebGLInput = {
     $instances: [],
 
-    WebGLInputCreate: function (x, y, width, height, fontsize, text, isMultiLine) {
+    WebGLInputCreate: function (x, y, width, height, fontsize, text, isMultiLine, isPassword) {
         var gameContainer = document.getElementById("gameContainer");
         var input = document.createElement(isMultiLine?"textarea":"input");
         input.style.position = "absolute";
@@ -19,6 +19,11 @@ var WebGLInput = {
 		input.value = Pointer_stringify(text);
 		input.style.fontSize = fontsize;
 		input.setSelectionRange(0, input.value.length);
+		
+		if(isPassword){
+			input.type = 'password';
+		}
+
         gameContainer.appendChild(input);
         return instances.push(input) - 1;
     },
