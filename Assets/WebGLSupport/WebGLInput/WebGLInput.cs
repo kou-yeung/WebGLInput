@@ -146,6 +146,8 @@ namespace WebGLSupport
         [MonoPInvokeCallback(typeof(Action<int, string>))]
         static void OnValueChange(int id, string value)
         {
+            if(!instances.ContainsKey(id)) return;
+
             var input = instances[id];
             var index = input.caretPosition;
             input.text = value;
