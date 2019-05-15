@@ -1,11 +1,13 @@
-﻿using System.Collections;
+﻿#if UNITY_2018_2_OR_NEWER
+#define TMP_WEBGL_SUPPORT
+#endif
+
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
-using System.Runtime.InteropServices;
 using System;
 using AOT;
+using System.Runtime.InteropServices; // for DllImport
 
 namespace WebGLSupport
 {
@@ -71,17 +73,25 @@ namespace WebGLSupport
 #endif
     }
 
-    [RequireComponent(typeof(InputField))]
     public class WebGLInput : MonoBehaviour
     {
-        static Dictionary<int, InputField> instances = new Dictionary<int, InputField>();
+        static Dictionary<int, IInputField> instances = new Dictionary<int, IInputField>();
 
         int id = -1;
-        InputField input;
+        IInputField input;
+
+        private IInputField Setup()
+        {
+            if (GetComponent<InputField>()) return new WrappedInputField(GetComponent<InputField>());
+#if TMP_WEBGL_SUPPORT
+            if (GetComponent<TMPro.TMP_InputField>()) return new WrappedTMPInputField(GetComponent<TMPro.TMP_InputField>());
+#endif // TMP_WEBGL_SUPPORT
+            throw new Exception("Can not Setup WebGLInput!!");
+        }
 
         private void Start()
         {
-            input = GetComponent<InputField>();
+            input = Setup();
 #if !(UNITY_WEBGL && !UNITY_EDITOR)
             // WebGL 以外、更新メソッドは動作しないようにします
             enabled = false;
@@ -93,17 +103,17 @@ namespace WebGLSupport
         /// <param name="eventData"></param>
         public void OnSelect(/*BaseEventData eventData*/)
         {
-            var rect = GetScreenCoordinates(input.textComponent.GetComponent<RectTransform>());
-            bool isPassword = input.contentType == InputField.ContentType.Password;
+            var rect = GetScreenCoordinates(input.TextComponentRectTransform());
+            bool isPassword = input.contentType == ContentType.Password;
 
             var x = (int)(rect.x);
             //var y = (int)(Screen.height - (rect.y + rect.height));
             //id = WebGLInputPlugin.WebGLInputCreate(x, y, (int)rect.width, (int)rect.height, input.textComponent.fontSize, input.text);
             var y = (int)(Screen.height - (rect.y));
-            id = WebGLInputPlugin.WebGLInputCreate(x, y, (int)rect.width, (int)1, input.textComponent.fontSize, input.text, input.lineType != InputField.LineType.SingleLine, isPassword);
+            id = WebGLInputPlugin.WebGLInputCreate(x, y, (int)rect.width, (int)1, input.fontSize, input.text, input.lineType != LineType.SingleLine, isPassword);
 
             instances[id] = input;
-            WebGLInputPlugin.WebGLInputEnterSubmit(id, input.lineType != InputField.LineType.MultiLineNewline);
+            WebGLInputPlugin.WebGLInputEnterSubmit(id, input.lineType != LineType.MultiLineNewline);
             WebGLInputPlugin.WebGLInputOnFocus(id, OnFocus);
             WebGLInputPlugin.WebGLInputOnBlur(id, OnBlur);
             WebGLInputPlugin.WebGLInputOnValueChange(id, OnValueChange);
@@ -154,7 +164,7 @@ namespace WebGLSupport
             input.text = value;
 
             // InputField.ContentType.Name が Name の場合、先頭文字が強制的大文字になるため小文字にして比べる
-            if (input.contentType == InputField.ContentType.Name)
+            if (input.contentType == ContentType.Name)
             {
                 if (string.Compare(input.text, value, true) == 0)
                 {
@@ -177,7 +187,7 @@ namespace WebGLSupport
 
         void Update()
         {
-            if (!input.isFocused) return;
+            if (input == null || !input.isFocused) return;
             // 未登録の場合、選択する
             if (!instances.ContainsKey(id))
             {
@@ -199,7 +209,7 @@ namespace WebGLSupport
             }
 
             input.Rebuild(CanvasUpdate.LatePreRender);
-            input.textComponent.SetAllDirty();
+            input.SetAllDirty();
         }
     }
 }
