@@ -1,6 +1,7 @@
 # WebGLInput
 
 IME for Unity WebGL
+(Support TextMesh Pro from Unity2018.2)
 
 # Sample
 http://kou-yeung.mygamesonline.org/WebGLInputSample/index.html
