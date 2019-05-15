@@ -132,7 +132,28 @@ namespace WebGLSupport
         {
             var worldCorners = new Vector3[4];
             uiElement.GetWorldCorners(worldCorners);
-            return new Rect(worldCorners[0].x, worldCorners[0].y, worldCorners[2].x - worldCorners[0].x, worldCorners[2].y - worldCorners[0].y);
+
+            // try to support RenderMode:WorldSpace
+            var canvas = uiElement.GetComponentInParent<Canvas>();
+            if (canvas && canvas.renderMode == RenderMode.WorldSpace)
+            {
+                for (var i = 0; i < worldCorners.Length; i++)
+                {
+                    worldCorners[i] = canvas.worldCamera.WorldToScreenPoint(worldCorners[i]);
+                }
+            }
+
+            var min = new Vector3(float.MaxValue, float.MaxValue);
+            var max = new Vector3(float.MinValue, float.MinValue);
+            for (var i = 0; i < worldCorners.Length; i++)
+            {
+                min.x = Mathf.Min(min.x, worldCorners[i].x);
+                min.y = Mathf.Min(min.y, worldCorners[i].y);
+                max.x = Mathf.Max(max.x, worldCorners[i].x);
+                max.y = Mathf.Max(max.y, worldCorners[i].y);
+            }
+
+            return new Rect(min.x, min.y, max.x - min.x, max.y - min.y);
         }
 
         [MonoPInvokeCallback(typeof(Action<int>))]
