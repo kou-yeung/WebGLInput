@@ -29,17 +29,29 @@ var WebGLInput = {
     },
 	WebGLInputEnterSubmit: function(id, falg){
 		var input = instances[id];
-		if(falg){
-			input.onkeydown = function(e){
-				if ((e.which && e.which === 13) || (e.keyCode && e.keyCode === 13)) {
+		input.onkeydown = function(e){
+			// for enter key
+			if ((e.which && e.which === 13) || (e.keyCode && e.keyCode === 13)) {
+				if(falg)
+				{
 					input.blur();
 					return false;
 				}
-				return true;
-			};
-		} else {
-			input.onkeydown = null;
-		}
+			}
+			// for tab key
+			if ((e.which && e.which === 9) || (e.keyCode && e.keyCode === 9)) {
+				if(input instanceof HTMLTextAreaElement)
+				{
+					var val = input.value;
+					var pos = input.selectionStart;
+					input.value = val.substr(0, pos) + '\t' + val.substr(pos, val.length);
+				    input.setSelectionRange(pos + 1, pos + 1);
+					input.oninput(); // HACK : to call oninput
+				}
+				return false;
+			}
+			return true;
+		};
     },
 	WebGLInputFocus: function(id){
 		var input = instances[id];
