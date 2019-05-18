@@ -72,6 +72,11 @@ namespace WebGLSupport
             return input.textComponent.GetComponent<RectTransform>();
         }
 
+        public void ActivateInputField()
+        {
+            input.ActivateInputField();
+        }
+
         public void DeactivateInputField()
         {
             input.DeactivateInputField();
