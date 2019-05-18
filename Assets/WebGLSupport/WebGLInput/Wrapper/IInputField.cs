@@ -22,7 +22,7 @@ namespace WebGLSupport
         MultiLineSubmit = 1,
         MultiLineNewline = 2
     }
-    interface IInputField
+    public interface IInputField
     {
         ContentType contentType { get; }
         LineType lineType { get; }
@@ -35,6 +35,7 @@ namespace WebGLSupport
         int selectionAnchorPosition { set; }
 
         RectTransform TextComponentRectTransform();
+        void ActivateInputField();
         void DeactivateInputField();
         void Rebuild(CanvasUpdate update);
         void SetAllDirty();

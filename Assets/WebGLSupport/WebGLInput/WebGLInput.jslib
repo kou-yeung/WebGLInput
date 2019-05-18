@@ -29,18 +29,27 @@ var WebGLInput = {
     },
 	WebGLInputEnterSubmit: function(id, falg){
 		var input = instances[id];
-		if(falg){
-			input.onkeydown = function(e){
-				if ((e.which && e.which === 13) || (e.keyCode && e.keyCode === 13)) {
+		// for enter key
+		input.addEventListener('keydown', function(e) {
+			if ((e.which && e.which === 13) || (e.keyCode && e.keyCode === 13)) {
+				if(falg)
+				{
+					e.preventDefault();
 					input.blur();
-					return false;
 				}
-				return true;
-			};
-		} else {
-			input.onkeydown = null;
-		}
+			}
+		});
     },
+	WebGLInputTab:function(id, cb) {
+		var input = instances[id];
+		// for tab key
+        input.addEventListener('keydown', function (e) {
+            if ((e.which && e.which === 9) || (e.keyCode && e.keyCode === 9)) {
+                e.preventDefault();
+                Runtime.dynCall("vii", cb, [id, e.shiftKey ? -1 : 1]);
+            }
+		});
+	},
 	WebGLInputFocus: function(id){
 		var input = instances[id];
 		input.focus();
