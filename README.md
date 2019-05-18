@@ -3,6 +3,7 @@
 IME for Unity WebGL ( Support TextMesh Pro from Unity2018.2 )
 
 support “copy and paste”
+
 support "tab" and "shift+tab" change focus to other InputField
 
 # Sample
