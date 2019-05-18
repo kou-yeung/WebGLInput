@@ -19,4 +19,5 @@ no need to setting anything.
 
 # Support Fullscreen
 Please follow this thread to setup your index.html
+
 https://github.com/kou-yeung/WebGLInput/issues/2#issuecomment-491657725
