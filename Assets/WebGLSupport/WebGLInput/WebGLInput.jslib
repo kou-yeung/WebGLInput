@@ -30,7 +30,7 @@ var WebGLInput = {
 	WebGLInputEnterSubmit: function(id, falg){
 		var input = instances[id];
 		// for enter key
-		input.addEventListener('keydown', (e) => {
+		input.addEventListener('keydown', function(e) {
 			if ((e.which && e.which === 13) || (e.keyCode && e.keyCode === 13)) {
 				if(falg)
 				{
@@ -43,7 +43,7 @@ var WebGLInput = {
 	WebGLInputTab:function(id, cb) {
 		var input = instances[id];
 		// for tab key
-        input.addEventListener('keydown', (e) => {
+        input.addEventListener('keydown', function (e) {
             if ((e.which && e.which === 9) || (e.keyCode && e.keyCode === 9)) {
                 e.preventDefault();
                 Runtime.dynCall("vii", cb, [id, e.shiftKey ? -1 : 1]);

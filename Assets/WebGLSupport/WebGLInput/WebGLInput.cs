@@ -258,17 +258,6 @@ namespace WebGLSupport
                 inputs.Remove(input);
             }
 
-            /*
-            public static void Focus(int value)
-            {
-                if (inputs.Count <= 0) return;
-                current += value;
-                if (current < 0) current = inputs.Count - 1;
-                else if (current >= inputs.Count) current = 0;
-                inputs[current].input.ActivateInputField();
-            }
-            */
-
             public static void OnTab(IInputField input, int value)
             {
                 if (inputs.Count <= 1) return;
