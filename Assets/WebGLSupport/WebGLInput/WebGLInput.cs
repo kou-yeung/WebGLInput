@@ -263,7 +263,7 @@ namespace WebGLSupport
         /// to manage tab focus
         /// base on scene position
         /// </summary>
-        public static class WebGLInputTabFocus
+        static class WebGLInputTabFocus
         {
             static List<WebGLInput> inputs = new List<WebGLInput>();
             static int current = 0;
