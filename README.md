@@ -2,7 +2,8 @@
 
 IME for Unity WebGL ( Support TextMesh Pro from Unity2018.2 )
 
-“copy and paste” support
+support “copy and paste”
+support "tab" and "shift+tab" change focus to other InputField
 
 # Sample
 http://kou-yeung.mygamesonline.org/WebGLInputSample/index.html
@@ -15,3 +16,7 @@ http://kou-yeung.mygamesonline.org/WebGLInputSample/index.html
 3.build and run!!
 
 no need to setting anything.
+
+# Support Fullscreen
+Please follow this thread to setup your index.html
+https://github.com/kou-yeung/WebGLInput/issues/2#issuecomment-491657725
