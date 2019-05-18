@@ -21,6 +21,9 @@ namespace WebGLSupport
         public static extern void WebGLInputEnterSubmit(int id, bool flag);
 
         [DllImport("__Internal")]
+        public static extern void WebGLInputTab(int id, Action<int, int> cb);
+
+        [DllImport("__Internal")]
         public static extern void WebGLInputFocus(int id);
 
         [DllImport("__Internal")]
@@ -58,6 +61,7 @@ namespace WebGLSupport
 #else
         public static int WebGLInputCreate(int x, int y, int width, int height, int fontsize, string text, bool isMultiLine, bool isPassword) { return 0; }
         public static void WebGLInputEnterSubmit(int id, bool flag) { }
+        public static void WebGLInputTab(int id, Action<int, int> cb) { }
         public static void WebGLInputFocus(int id) { }
         public static void WebGLInputOnFocus(int id, Action<int> cb) { }
         public static void WebGLInputOnBlur(int id, Action<int> cb) { }
@@ -73,7 +77,7 @@ namespace WebGLSupport
 #endif
     }
 
-    public class WebGLInput : MonoBehaviour
+    public class WebGLInput : MonoBehaviour, IComparable<WebGLInput>
     {
         static Dictionary<int, IInputField> instances = new Dictionary<int, IInputField>();
 
@@ -89,7 +93,7 @@ namespace WebGLSupport
             throw new Exception("Can not Setup WebGLInput!!");
         }
 
-        private void Start()
+        private void Awake()
         {
             input = Setup();
 #if !(UNITY_WEBGL && !UNITY_EDITOR)
@@ -118,6 +122,7 @@ namespace WebGLSupport
             WebGLInputPlugin.WebGLInputOnBlur(id, OnBlur);
             WebGLInputPlugin.WebGLInputOnValueChange(id, OnValueChange);
             WebGLInputPlugin.WebGLInputOnEditEnd(id, OnEditEnd);
+            WebGLInputPlugin.WebGLInputTab(id, OnTab);
             // default value : https://www.w3schools.com/tags/att_input_maxlength.asp
             WebGLInputPlugin.WebGLInputMaxLength(id, (input.characterLimit > 0) ? input.characterLimit : 524288);
             WebGLInputPlugin.WebGLInputFocus(id);
@@ -157,7 +162,7 @@ namespace WebGLSupport
         [MonoPInvokeCallback(typeof(Action<int, string>))]
         static void OnValueChange(int id, string value)
         {
-            if(!instances.ContainsKey(id)) return;
+            if (!instances.ContainsKey(id)) return;
 
             var input = instances[id];
             var index = input.caretPosition;
@@ -183,6 +188,11 @@ namespace WebGLSupport
         static void OnEditEnd(int id, string value)
         {
             instances[id].text = value;
+        }
+        [MonoPInvokeCallback(typeof(Action<int, int>))]
+        static void OnTab(int id, int value)
+        {
+            WebGLInputTabFocus.OnTab(instances[id], value);
         }
 
         void Update()
@@ -210,6 +220,64 @@ namespace WebGLSupport
 
             input.Rebuild(CanvasUpdate.LatePreRender);
             input.SetAllDirty();
+        }
+        private void OnEnable()
+        {
+            WebGLInputTabFocus.Add(this);
+        }
+        private void OnDisable()
+        {
+            WebGLInputTabFocus.Remove(this);
+        }
+        public int CompareTo(WebGLInput other)
+        {
+            var a = GetScreenCoordinates(input.TextComponentRectTransform());
+            var b = GetScreenCoordinates(other.input.TextComponentRectTransform());
+            var res = b.y.CompareTo(a.y);
+            if (res == 0) res = a.x.CompareTo(b.x);
+            return res;
+        }
+
+        /// <summary>
+        /// to manage tab focus
+        /// base on scene position
+        /// </summary>
+        public static class WebGLInputTabFocus
+        {
+            static List<WebGLInput> inputs = new List<WebGLInput>();
+            static int current = 0;
+
+            public static void Add(WebGLInput input)
+            {
+                inputs.Add(input);
+                inputs.Sort();
+            }
+
+            public static void Remove(WebGLInput input)
+            {
+                inputs.Remove(input);
+            }
+
+            /*
+            public static void Focus(int value)
+            {
+                if (inputs.Count <= 0) return;
+                current += value;
+                if (current < 0) current = inputs.Count - 1;
+                else if (current >= inputs.Count) current = 0;
+                inputs[current].input.ActivateInputField();
+            }
+            */
+
+            public static void OnTab(IInputField input, int value)
+            {
+                if (inputs.Count <= 1) return;
+                var index = inputs.FindIndex(v => v.input == input);
+                index += value;
+                if (index < 0) index = inputs.Count - 1;
+                else if (index >= inputs.Count) index = 0;
+                inputs[index].input.ActivateInputField();
+            }
         }
     }
 }

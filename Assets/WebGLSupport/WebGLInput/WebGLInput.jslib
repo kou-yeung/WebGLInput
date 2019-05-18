@@ -29,30 +29,27 @@ var WebGLInput = {
     },
 	WebGLInputEnterSubmit: function(id, falg){
 		var input = instances[id];
-		input.onkeydown = function(e){
-			// for enter key
+		// for enter key
+		input.addEventListener('keydown', (e) => {
 			if ((e.which && e.which === 13) || (e.keyCode && e.keyCode === 13)) {
 				if(falg)
 				{
+					e.preventDefault();
 					input.blur();
-					return false;
 				}
 			}
-			// for tab key
-			if ((e.which && e.which === 9) || (e.keyCode && e.keyCode === 9)) {
-				if(input instanceof HTMLTextAreaElement)
-				{
-					var val = input.value;
-					var pos = input.selectionStart;
-					input.value = val.substr(0, pos) + '\t' + val.substr(pos, val.length);
-				    input.setSelectionRange(pos + 1, pos + 1);
-					input.oninput(); // HACK : to call oninput
-				}
-				return false;
-			}
-			return true;
-		};
+		});
     },
+	WebGLInputTab:function(id, cb) {
+		var input = instances[id];
+		// for tab key
+        input.addEventListener('keydown', (e) => {
+            if ((e.which && e.which === 9) || (e.keyCode && e.keyCode === 9)) {
+                e.preventDefault();
+                Runtime.dynCall("vii", cb, [id, e.shiftKey ? -1 : 1]);
+            }
+		});
+	},
 	WebGLInputFocus: function(id){
 		var input = instances[id];
 		input.focus();
