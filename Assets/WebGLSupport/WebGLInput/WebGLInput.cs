@@ -198,6 +198,8 @@ namespace WebGLSupport
         static IEnumerator Blue(int id)
         {
             yield return null;
+            if (!instances.ContainsKey(id)) yield break;
+
             var block = instances[id].blueBlock;    // get blue block state
             instances[id].blueBlock = false;        // reset instalce block state
             if (block) yield break;                 // if block. break it!!
