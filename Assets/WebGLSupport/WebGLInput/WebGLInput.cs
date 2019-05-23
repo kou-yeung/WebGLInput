@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using System;
 using AOT;
 using System.Runtime.InteropServices; // for DllImport
+using System.Collections;
 
 namespace WebGLSupport
 {
@@ -59,6 +60,7 @@ namespace WebGLSupport
         [DllImport("__Internal")]
         public static extern void WebGLInputDelete(int id);
 #else
+
         public static int WebGLInputCreate(int x, int y, int width, int height, int fontsize, string text, bool isMultiLine, bool isPassword) { return 0; }
         public static void WebGLInputEnterSubmit(int id, bool flag) { }
         public static void WebGLInputTab(int id, Action<int, int> cb) { }
@@ -79,10 +81,11 @@ namespace WebGLSupport
 
     public class WebGLInput : MonoBehaviour, IComparable<WebGLInput>
     {
-        static Dictionary<int, IInputField> instances = new Dictionary<int, IInputField>();
+        static Dictionary<int, WebGLInput> instances = new Dictionary<int, WebGLInput>();
 
         int id = -1;
         IInputField input;
+        bool blueBlock = false;
 
         private IInputField Setup()
         {
@@ -116,7 +119,7 @@ namespace WebGLSupport
             var y = (int)(Screen.height - (rect.y));
             id = WebGLInputPlugin.WebGLInputCreate(x, y, (int)rect.width, (int)1, input.fontSize, input.text, input.lineType != LineType.SingleLine, isPassword);
 
-            instances[id] = input;
+            instances[id] = this;
             WebGLInputPlugin.WebGLInputEnterSubmit(id, input.lineType != LineType.MultiLineNewline);
             WebGLInputPlugin.WebGLInputOnFocus(id, OnFocus);
             WebGLInputPlugin.WebGLInputOnBlur(id, OnBlur);
@@ -126,6 +129,13 @@ namespace WebGLSupport
             // default value : https://www.w3schools.com/tags/att_input_maxlength.asp
             WebGLInputPlugin.WebGLInputMaxLength(id, (input.characterLimit > 0) ? input.characterLimit : 524288);
             WebGLInputPlugin.WebGLInputFocus(id);
+
+            WebGLWindow.OnBlurEvent += OnWindowBlur;
+        }
+
+        void OnWindowBlur()
+        {
+            blueBlock = true;
         }
 
         /// <summary>
@@ -161,6 +171,14 @@ namespace WebGLSupport
             return new Rect(min.x, min.y, max.x - min.x, max.y - min.y);
         }
 
+        void DeactivateInputField()
+        {
+            WebGLInputPlugin.WebGLInputDelete(id);
+            input.DeactivateInputField();
+            instances.Remove(id);
+            WebGLWindow.OnBlurEvent -= OnWindowBlur;
+        }
+
         [MonoPInvokeCallback(typeof(Action<int>))]
         static void OnFocus(int id)
         {
@@ -172,12 +190,19 @@ namespace WebGLSupport
         [MonoPInvokeCallback(typeof(Action<int>))]
         static void OnBlur(int id)
         {
-            WebGLInputPlugin.WebGLInputDelete(id);
-            instances[id].DeactivateInputField();
-            instances.Remove(id);
 #if UNITY_WEBGL && !UNITY_EDITOR
             UnityEngine.WebGLInput.captureAllKeyboardInput = true;
 #endif
+            instances[id].StartCoroutine(Blue(id));
+        }
+        static IEnumerator Blue(int id)
+        {
+            yield return null;
+            var block = instances[id].blueBlock;    // get blue block state
+            instances[id].blueBlock = false;        // reset instalce block state
+            if (block) yield break;                 // if block. break it!!
+
+            instances[id].DeactivateInputField();
         }
 
         [MonoPInvokeCallback(typeof(Action<int, string>))]
@@ -185,30 +210,30 @@ namespace WebGLSupport
         {
             if (!instances.ContainsKey(id)) return;
 
-            var input = instances[id];
-            var index = input.caretPosition;
-            input.text = value;
+            var instance = instances[id];
+            var index = instance.input.caretPosition;
+            instance.input.text = value;
 
             // InputField.ContentType.Name が Name の場合、先頭文字が強制的大文字になるため小文字にして比べる
-            if (input.contentType == ContentType.Name)
+            if (instance.input.contentType == ContentType.Name)
             {
-                if (string.Compare(input.text, value, true) == 0)
+                if (string.Compare(instance.input.text, value, true) == 0)
                 {
-                    value = input.text;
+                    value = instance.input.text;
                 }
             }
 
             // InputField の ContentType による整形したテキストを HTML の input に再設定します
-            if (value != input.text)
+            if (value != instance.input.text)
             {
-                WebGLInputPlugin.WebGLInputText(id, input.text);
+                WebGLInputPlugin.WebGLInputText(id, instance.input.text);
                 WebGLInputPlugin.WebGLInputSetSelectionRange(id, index, index);
             }
         }
         [MonoPInvokeCallback(typeof(Action<int, string>))]
         static void OnEditEnd(int id, string value)
         {
-            instances[id].text = value;
+            instances[id].input.text = value;
         }
         [MonoPInvokeCallback(typeof(Action<int, int>))]
         static void OnTab(int id, int value)
@@ -263,10 +288,9 @@ namespace WebGLSupport
         /// to manage tab focus
         /// base on scene position
         /// </summary>
-        public static class WebGLInputTabFocus
+        static class WebGLInputTabFocus
         {
             static List<WebGLInput> inputs = new List<WebGLInput>();
-            static int current = 0;
 
             public static void Add(WebGLInput input)
             {
@@ -279,10 +303,10 @@ namespace WebGLSupport
                 inputs.Remove(input);
             }
 
-            public static void OnTab(IInputField input, int value)
+            public static void OnTab(WebGLInput input, int value)
             {
                 if (inputs.Count <= 1) return;
-                var index = inputs.FindIndex(v => v.input == input);
+                var index = inputs.IndexOf(input);
                 index += value;
                 if (index < 0) index = inputs.Count - 1;
                 else if (index >= inputs.Count) index = 0;
