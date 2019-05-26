@@ -59,6 +59,9 @@ namespace WebGLSupport
 
         [DllImport("__Internal")]
         public static extern void WebGLInputDelete(int id);
+
+        [DllImport("__Internal")]
+        public static extern void WebGLCopyToClipboard(int id);
 #else
 
         public static int WebGLInputCreate(int x, int y, int width, int height, int fontsize, string text, bool isMultiLine, bool isPassword) { return 0; }
@@ -76,6 +79,7 @@ namespace WebGLSupport
         public static void WebGLInputMaxLength(int id, int maxlength) { }
         public static void WebGLInputText(int id, string text) { }
         public static void WebGLInputDelete(int id) { }
+        public static void WebGLCopyToClipboard(int id) { }
 #endif
     }
 
@@ -284,6 +288,18 @@ namespace WebGLSupport
             var res = b.y.CompareTo(a.y);
             if (res == 0) res = a.x.CompareTo(b.x);
             return res;
+        }
+
+        public void CopyToClipboard()
+        {
+#if UNITY_WEBGL && !UNITY_EDITOR
+            if (input == null) return;
+            if (!instances.ContainsKey(id))
+                OnSelect();
+            WebGLInputPlugin.WebGLCopyToClipboard(id);
+#else
+            GUIUtility.systemCopyBuffer = input.text;
+#endif
         }
 
         /// <summary>

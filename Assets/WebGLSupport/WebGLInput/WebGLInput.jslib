@@ -109,6 +109,11 @@ var WebGLInput = {
         input.parentNode.removeChild(input);
         instances[id] = null;
     },
+	WebGLCopyToClipboard:function(id){
+		var input = instances[id];
+		input.select();
+		document.execCommand('copy');
+	},
 }
 
 autoAddDeps(WebGLInput, '$instances');
