@@ -1,5 +1,5 @@
 var WebGLDocument = {
-    WebGLDocumentCopyToClipboard: function (cb)
+    WebGLDocumentCopyToClipboard: function (text)
 	{
 		var tmp = document.createElement("div");
 		// 選択用のタグ生成
@@ -8,7 +8,7 @@ var WebGLDocument = {
 		pre.style.webkitUserSelect = 'auto';
 		pre.style.userSelect = 'auto';
 
-		tmp.appendChild(pre).textContent = string;
+		tmp.appendChild(pre).textContent = Pointer_stringify(text);
 
 		// 要素を画面外へ
 		var s = tmp.style;
