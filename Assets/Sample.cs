@@ -8,7 +8,7 @@ public class Sample : MonoBehaviour
 {
     private void Start()
     {
-        WebGLDocumentPlugin.WebGLDocumentCopyToClipboard("Hello World!!1");
+        Debug.Log(WebGLDocumentPlugin.WebGLDocumentCopyToClipboard("Hello World!\n!1"));
     }
     public void OnValueChange(InputField o)
     {

@@ -25,7 +25,8 @@ var WebGLDocument = {
 
 		// —v‘fíœ
 		document.body.removeChild(tmp);
-		//return result;
+		
+		return result;
 	},
 }
 

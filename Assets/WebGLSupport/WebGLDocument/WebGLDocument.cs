@@ -9,17 +9,17 @@ namespace WebGLSupport
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
         [DllImport("__Internal")]
-        public static extern void WebGLDocumentCopyToClipboard(string text);
+        public static extern bool WebGLDocumentCopyToClipboard(string text);
 #else
-        public static void WebGLDocumentCopyToClipboard(string text) { }
+        public static bool WebGLDocumentCopyToClipboard(string text) { return false; }
 #endif
     }
 
     public static class WebGLDocument
     {
-        static void CopyToClipboard(string text)
+        static bool CopyToClipboard(string text)
         {
-            WebGLDocumentPlugin.WebGLDocumentCopyToClipboard(text);
+            return WebGLDocumentPlugin.WebGLDocumentCopyToClipboard(text);
         }
     }
 }
