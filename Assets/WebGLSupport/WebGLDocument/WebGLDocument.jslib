@@ -2,8 +2,10 @@ var WebGLDocument = {
     WebGLDocumentCopyToClipboard: function (text)
 	{
 		var tmp = document.createElement("div");
+
 		// 選択用のタグ生成
 		var pre = document.createElement('pre');
+
 		// 親要素のCSSで user-select: none だとコピーできないので書き換える
 		pre.style.webkitUserSelect = 'auto';
 		pre.style.userSelect = 'auto';
@@ -26,6 +28,8 @@ var WebGLDocument = {
 		// 要素削除
 		document.body.removeChild(tmp);
 		
+		console.log(result);
+
 		return result;
 	},
 }
