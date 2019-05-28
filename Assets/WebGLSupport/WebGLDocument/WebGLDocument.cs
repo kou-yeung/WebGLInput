@@ -17,7 +17,7 @@ namespace WebGLSupport
 
     public static class WebGLDocument
     {
-        static bool CopyToClipboard(string text)
+        public static bool CopyToClipboard(string text)
         {
             return WebGLDocumentPlugin.WebGLDocumentCopyToClipboard(text);
         }

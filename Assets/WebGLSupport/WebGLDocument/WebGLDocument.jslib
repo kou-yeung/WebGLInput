@@ -1,34 +1,33 @@
 var WebGLDocument = {
     WebGLDocumentCopyToClipboard: function (text)
 	{
+		// ref: https://qiita.com/simiraaaa/items/2e7478d72f365aa48356
+		
+		// create div
 		var tmp = document.createElement("div");
 
-		// 選択用のタグ生成
+		// create select tag and set "user-select". (if "none", it can not copy!!)
 		var pre = document.createElement('pre');
-
-		// 親要素のCSSで user-select: none だとコピーできないので書き換える
 		pre.style.webkitUserSelect = 'auto';
 		pre.style.userSelect = 'auto';
 
+		// add pre to tmp and set textContent
 		tmp.appendChild(pre).textContent = Pointer_stringify(text);
 
-		// 要素を画面外へ
+		// move outside of screen
 		var s = tmp.style;
 		s.position = 'fixed';
 		s.right = '200%';
 
-		// body に追加
+		// add tmp to body and select all.
 		document.body.appendChild(tmp);
-		// 要素を選択
 		document.getSelection().selectAllChildren(tmp);
 
-		// クリップボードにコピー
+		// execCommand
 		var result = document.execCommand("copy");
 
-		// 要素削除
+		// remove tmp
 		document.body.removeChild(tmp);
-		
-		console.log(result);
 
 		return result;
 	},
