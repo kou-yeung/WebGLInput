@@ -17,7 +17,7 @@ var WebGLInput = {
 		input.style.cursor = "default";
 		input.spellcheck = false;
 		input.value = Pointer_stringify(text);
-		input.style.fontSize = fontsize;
+		input.style.fontSize = fontsize + "px";
 		input.setSelectionRange(0, input.value.length);
 		
 		if(isPassword){
@@ -66,6 +66,9 @@ var WebGLInput = {
             Runtime.dynCall("vi", cb, [id]);
         };
     },
+	WebGLInputIsFocus: function (id) {
+		return instances[id] === document.activeElement;
+	},
 	WebGLInputOnValueChange:function(id, cb){
         var input = instances[id];
         input.oninput = function () {

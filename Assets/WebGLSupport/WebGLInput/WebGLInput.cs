@@ -58,6 +58,9 @@ namespace WebGLSupport
         public static extern void WebGLInputText(int id, string text);
 
         [DllImport("__Internal")]
+        public static extern bool WebGLInputIsFocus(int id);
+
+        [DllImport("__Internal")]
         public static extern void WebGLInputDelete(int id);
 #else
 
@@ -75,6 +78,7 @@ namespace WebGLSupport
         public static void WebGLInputSetSelectionRange(int id, int start, int end) { }
         public static void WebGLInputMaxLength(int id, int maxlength) { }
         public static void WebGLInputText(int id, string text) { }
+        public static bool WebGLInputIsFocus(int id) { return false; }
         public static void WebGLInputDelete(int id) { }
 #endif
     }
@@ -176,6 +180,7 @@ namespace WebGLSupport
             WebGLInputPlugin.WebGLInputDelete(id);
             input.DeactivateInputField();
             instances.Remove(id);
+            id = -1;    // reset id to -1;
             WebGLWindow.OnBlurEvent -= OnWindowBlur;
         }
 
@@ -250,6 +255,10 @@ namespace WebGLSupport
             if (!instances.ContainsKey(id))
             {
                 OnSelect();
+            } else if(!WebGLInputPlugin.WebGLInputIsFocus(id))
+            {
+                // focus this id
+                WebGLInputPlugin.WebGLInputFocus(id);
             }
 
             var start = WebGLInputPlugin.WebGLInputSelectionStart(id);
