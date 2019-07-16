@@ -16,7 +16,7 @@ namespace WebGLSupport
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
         [DllImport("__Internal")]
-        public static extern int WebGLInputCreate(int x, int y, int width, int height, int fontsize, string text, bool isMultiLine, bool isPassword);
+        public static extern int WebGLInputCreate(string canvasId, int x, int y, int width, int height, int fontsize, string text, bool isMultiLine, bool isPassword);
 
         [DllImport("__Internal")]
         public static extern void WebGLInputEnterSubmit(int id, bool flag);
@@ -64,7 +64,7 @@ namespace WebGLSupport
         public static extern void WebGLInputDelete(int id);
 #else
 
-        public static int WebGLInputCreate(int x, int y, int width, int height, int fontsize, string text, bool isMultiLine, bool isPassword) { return 0; }
+        public static int WebGLInputCreate(string canvasId, int x, int y, int width, int height, int fontsize, string text, bool isMultiLine, bool isPassword) { return 0; }
         public static void WebGLInputEnterSubmit(int id, bool flag) { }
         public static void WebGLInputTab(int id, Action<int, int> cb) { }
         public static void WebGLInputFocus(int id) { }
@@ -86,6 +86,16 @@ namespace WebGLSupport
     public class WebGLInput : MonoBehaviour, IComparable<WebGLInput>
     {
         static Dictionary<int, WebGLInput> instances = new Dictionary<int, WebGLInput>();
+        public static string CanvasId { get; set; }
+
+        static WebGLInput()
+        {
+#if UNITY_2019_1_OR_NEWER
+            WebGLInput.CanvasId = "unityContainer";
+#else
+            WebGLInput.CanvasId = "gameContainer";
+#endif
+        }
 
         int id = -1;
         IInputField input;
@@ -121,7 +131,7 @@ namespace WebGLSupport
             //var y = (int)(Screen.height - (rect.y + rect.height));
             //id = WebGLInputPlugin.WebGLInputCreate(x, y, (int)rect.width, (int)rect.height, input.textComponent.fontSize, input.text);
             var y = (int)(Screen.height - (rect.y));
-            id = WebGLInputPlugin.WebGLInputCreate(x, y, (int)rect.width, (int)1, input.fontSize, input.text, input.lineType != LineType.SingleLine, isPassword);
+            id = WebGLInputPlugin.WebGLInputCreate(WebGLInput.CanvasId, x, y, (int)rect.width, (int)1, input.fontSize, input.text, input.lineType != LineType.SingleLine, isPassword);
 
             instances[id] = this;
             WebGLInputPlugin.WebGLInputEnterSubmit(id, input.lineType != LineType.MultiLineNewline);
