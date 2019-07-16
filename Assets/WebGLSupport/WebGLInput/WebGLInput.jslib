@@ -66,6 +66,9 @@ var WebGLInput = {
             Runtime.dynCall("vi", cb, [id]);
         };
     },
+	WebGLInputIsFocus: function (id) {
+		return instances[id] === document.activeElement;
+	},
 	WebGLInputOnValueChange:function(id, cb){
         var input = instances[id];
         input.oninput = function () {
