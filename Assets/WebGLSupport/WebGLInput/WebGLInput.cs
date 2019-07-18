@@ -164,7 +164,7 @@ namespace WebGLSupport
 
             // try to support RenderMode:WorldSpace
             var canvas = uiElement.GetComponentInParent<Canvas>();
-            if (canvas && canvas.renderMode == RenderMode.WorldSpace)
+            if (canvas && canvas.worldCamera != null)
             {
                 for (var i = 0; i < worldCorners.Length; i++)
                 {
