@@ -19,6 +19,4 @@ http://kou-yeung.mygamesonline.org/WebGLInputSample/index.html
 no need to setting anything.
 
 # Support Fullscreen
-Please follow this thread to setup your index.html
-
-https://github.com/kou-yeung/WebGLInput/issues/2#issuecomment-491657725
+https://github.com/kou-yeung/WebGLInput/wiki/Support-FullScreen
