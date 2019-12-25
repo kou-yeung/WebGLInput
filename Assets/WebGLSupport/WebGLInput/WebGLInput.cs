@@ -230,7 +230,11 @@ namespace WebGLSupport
 
             var instance = instances[id];
             var index = instance.input.caretPosition;
-            instance.input.text = value;
+            if(!instance.input.ReadOnly)
+            {
+                instance.input.text = value;
+            }
+            
 
             // InputField.ContentType.Name が Name の場合、先頭文字が強制的大文字になるため小文字にして比べる
             if (instance.input.contentType == ContentType.Name)
@@ -251,7 +255,10 @@ namespace WebGLSupport
         [MonoPInvokeCallback(typeof(Action<int, string>))]
         static void OnEditEnd(int id, string value)
         {
-            instances[id].input.text = value;
+            if (!instances[id].input.ReadOnly)
+            {
+                instances[id].input.text = value;
+            }
         }
         [MonoPInvokeCallback(typeof(Action<int, int>))]
         static void OnTab(int id, int value)
