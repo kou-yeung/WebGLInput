@@ -16,6 +16,8 @@ namespace WebGLSupport
     {
         TMP_InputField input;
 
+        public bool ReadOnly { get => input.readOnly; }
+
         public string text
         {
             get { return input.text; }
