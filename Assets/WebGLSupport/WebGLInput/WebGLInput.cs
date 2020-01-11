@@ -144,6 +144,11 @@ namespace WebGLSupport
             WebGLInputPlugin.WebGLInputMaxLength(id, (input.characterLimit > 0) ? input.characterLimit : 524288);
             WebGLInputPlugin.WebGLInputFocus(id);
 
+            if(input.OnFocusSelectAll)
+            {
+                WebGLInputPlugin.WebGLInputSetSelectionRange(id, 0, input.text.Length);
+            }
+
             WebGLWindow.OnBlurEvent += OnWindowBlur;
         }
 

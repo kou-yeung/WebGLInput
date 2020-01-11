@@ -64,6 +64,11 @@ namespace WebGLSupport
             set { input.selectionAnchorPosition = value; }
         }
 
+        public bool OnFocusSelectAll
+        {
+            get { return input.onFocusSelectAll; }
+        }
+
         public WrappedTMPInputField(TMP_InputField input)
         {
             this.input = input;

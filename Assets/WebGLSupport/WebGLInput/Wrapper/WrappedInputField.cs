@@ -58,6 +58,11 @@ namespace WebGLSupport
             set { input.selectionAnchorPosition = value; }
         }
 
+        public bool OnFocusSelectAll
+        {
+            get { return true; }
+        }
+
         public WrappedInputField(InputField input)
         {
             this.input = input;
