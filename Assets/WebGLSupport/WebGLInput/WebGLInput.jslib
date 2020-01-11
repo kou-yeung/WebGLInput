@@ -18,7 +18,7 @@ var WebGLInput = {
 		input.spellcheck = false;
 		input.value = Pointer_stringify(text);
 		input.style.fontSize = fontsize + "px";
-		input.setSelectionRange(0, input.value.length);
+		//input.setSelectionRange(0, input.value.length);
 		
 		if(isPassword){
 			input.type = 'password';
