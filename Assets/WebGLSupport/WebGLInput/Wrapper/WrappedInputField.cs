@@ -10,7 +10,7 @@ namespace WebGLSupport
     {
         InputField input;
 
-        public bool ReadOnly { get => input.readOnly; }
+        public bool ReadOnly { get { return input.readOnly; } }
 
         public string text
         {
