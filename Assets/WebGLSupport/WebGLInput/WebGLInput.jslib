@@ -3,6 +3,22 @@ var WebGLInput = {
 
     WebGLInputCreate: function (canvasId, x, y, width, height, fontsize, text, isMultiLine, isPassword) {
         var container = document.getElementById(Pointer_stringify(canvasId));
+		
+		var canvas = document.getElementsByTagName('canvas')[0];
+		if(canvas)
+		{
+			var scaleX = container.offsetWidth / canvas.width;
+			var scaleY = container.offsetHeight / canvas.height;
+
+			if(scaleX && scaleY)
+			{
+				x *= scaleX;
+				width *= scaleX;
+				y *= scaleY;
+				height *= scaleY;
+			}
+		}
+
         var input = document.createElement(isMultiLine?"textarea":"input");
         input.style.position = "absolute";
         input.style.top = y + "px";
