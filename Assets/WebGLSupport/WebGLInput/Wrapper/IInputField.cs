@@ -31,15 +31,14 @@ namespace WebGLSupport
         int characterLimit { get; }
         int caretPosition { get; }
         bool isFocused { get; }
-        int selectionFocusPosition { set; }
-        int selectionAnchorPosition { set; }
+        int selectionFocusPosition { get; set; }
+        int selectionAnchorPosition { get; set; }
         bool ReadOnly { get; }
         bool OnFocusSelectAll { get; }
 
-        RectTransform TextComponentRectTransform();
+        RectTransform RectTransform();
         void ActivateInputField();
         void DeactivateInputField();
-        void Rebuild(CanvasUpdate update);
-        void SetAllDirty();
+        void Rebuild();
     }
 }

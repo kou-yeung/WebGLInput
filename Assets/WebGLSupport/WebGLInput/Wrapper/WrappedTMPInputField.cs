@@ -6,6 +6,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using WebGLSupport.Detail;
 
 namespace WebGLSupport
 {
@@ -15,6 +16,7 @@ namespace WebGLSupport
     class WrappedTMPInputField : IInputField
     {
         TMP_InputField input;
+        RebuildChecker checker;
 
         public bool ReadOnly { get { return input.readOnly; } }
 
@@ -56,11 +58,13 @@ namespace WebGLSupport
 
         public int selectionFocusPosition
         {
+            get { return input.selectionFocusPosition; }
             set { input.selectionFocusPosition = value; }
         }
 
         public int selectionAnchorPosition
         {
+            get { return input.selectionAnchorPosition; }
             set { input.selectionAnchorPosition = value; }
         }
 
@@ -72,11 +76,16 @@ namespace WebGLSupport
         public WrappedTMPInputField(TMP_InputField input)
         {
             this.input = input;
+            checker = new RebuildChecker(this);
         }
 
-        public RectTransform TextComponentRectTransform()
+        public RectTransform RectTransform()
         {
-            return input.textComponent.GetComponent<RectTransform>();
+            // 表示範囲
+            // MEMO :
+            //  TMP では textComponent を移動させてクリッピングするため、
+            //  表示範囲外になる場合があるので、自分の範囲を返す
+            return input.GetComponent<RectTransform>();
         }
 
         public void ActivateInputField()
@@ -89,14 +98,40 @@ namespace WebGLSupport
             input.DeactivateInputField();
         }
 
-        public void Rebuild(CanvasUpdate update)
+        public void Rebuild()
         {
-            input.Rebuild(update);
-        }
+            if (input.textComponent.enabled && checker.NeedRebuild())
+            {
+                //================================
+                // fix bug for tmp
+                // TMPの不具合で、正しく座標を設定されてなかったため、試しに対応する
+                var rt = input.textComponent.GetComponent<RectTransform>();
+                var size = input.textComponent.GetPreferredValues();
+                if (size.x < rt.rect.xMax)
+                {
+                    // textComponent の座標を更新
+                    var pos = rt.anchoredPosition;
+                    pos.x = 0;
+                    rt.anchoredPosition = pos;
 
-        public void SetAllDirty()
-        {
-            input.textComponent.SetAllDirty();
+                    // caret の座標更新
+                    var caret = input.GetComponentInChildren<TMP_SelectionCaret>();
+                    var caretRect = caret.GetComponent<RectTransform>();
+                    caretRect.anchoredPosition = rt.anchoredPosition;
+                }
+                //==============================
+
+                // HACK : 1フレーム無効にする
+                // MEMO : 他にいい方法Rebuildがあれば対応する
+                // LayoutRebuilder.ForceRebuildLayoutImmediate(); で試してダメでした
+                input.textComponent.enabled = false;
+                input.Rebuild(CanvasUpdate.LatePreRender);
+                input.textComponent.SetAllDirty();
+            }
+            else
+            {
+                input.textComponent.enabled = true;
+            }
         }
     }
 

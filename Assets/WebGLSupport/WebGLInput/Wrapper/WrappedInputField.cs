@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using WebGLSupport.Detail;
 
 namespace WebGLSupport
 {
@@ -9,6 +10,7 @@ namespace WebGLSupport
     class WrappedInputField : IInputField
     {
         InputField input;
+        RebuildChecker checker;
 
         public bool ReadOnly { get { return input.readOnly; } }
 
@@ -50,11 +52,13 @@ namespace WebGLSupport
 
         public int selectionFocusPosition
         {
+            get { return input.selectionFocusPosition; }
             set { input.selectionFocusPosition = value; }
         }
 
         public int selectionAnchorPosition
         {
+            get { return input.selectionAnchorPosition; }
             set { input.selectionAnchorPosition = value; }
         }
 
@@ -66,9 +70,10 @@ namespace WebGLSupport
         public WrappedInputField(InputField input)
         {
             this.input = input;
+            checker = new RebuildChecker(this);
         }
 
-        public RectTransform TextComponentRectTransform()
+        public RectTransform RectTransform()
         {
             return input.textComponent.GetComponent<RectTransform>();
         }
@@ -83,15 +88,13 @@ namespace WebGLSupport
             input.DeactivateInputField();
         }
 
-        public void Rebuild(CanvasUpdate update)
+        public void Rebuild()
         {
-            input.Rebuild(update);
-        }
-
-        public void SetAllDirty()
-        {
-            input.textComponent.SetAllDirty();
+            if (checker.NeedRebuild())
+            {
+                input.Rebuild(CanvasUpdate.LatePreRender);
+                input.textComponent.SetAllDirty();
+            }
         }
     }
-
 }

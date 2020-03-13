@@ -124,7 +124,7 @@ namespace WebGLSupport
         /// <param name="eventData"></param>
         public void OnSelect(/*BaseEventData eventData*/)
         {
-            var rect = GetScreenCoordinates(input.TextComponentRectTransform());
+            var rect = GetScreenCoordinates(input.RectTransform());
             bool isPassword = input.contentType == ContentType.Password;
 
             var x = (int)(rect.x);
@@ -298,8 +298,7 @@ namespace WebGLSupport
                 input.selectionAnchorPosition = start;
             }
 
-            input.Rebuild(CanvasUpdate.LatePreRender);
-            input.SetAllDirty();
+            input.Rebuild();
         }
         private void OnEnable()
         {
@@ -311,8 +310,8 @@ namespace WebGLSupport
         }
         public int CompareTo(WebGLInput other)
         {
-            var a = GetScreenCoordinates(input.TextComponentRectTransform());
-            var b = GetScreenCoordinates(other.input.TextComponentRectTransform());
+            var a = GetScreenCoordinates(input.RectTransform());
+            var b = GetScreenCoordinates(other.input.RectTransform());
             var res = b.y.CompareTo(a.y);
             if (res == 0) res = a.x.CompareTo(b.x);
             return res;
