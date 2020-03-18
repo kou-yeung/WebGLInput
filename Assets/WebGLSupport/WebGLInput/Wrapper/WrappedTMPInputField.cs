@@ -58,14 +58,14 @@ namespace WebGLSupport
 
         public int selectionFocusPosition
         {
-            get { return input.selectionFocusPosition; }
-            set { input.selectionFocusPosition = value; }
+            get { return input.selectionStringFocusPosition; }
+            set { input.selectionStringFocusPosition = value; }
         }
 
         public int selectionAnchorPosition
         {
-            get { return input.selectionAnchorPosition; }
-            set { input.selectionAnchorPosition = value; }
+            get { return input.selectionStringAnchorPosition; }
+            set { input.selectionStringAnchorPosition = value; }
         }
 
         public bool OnFocusSelectAll
