@@ -92,8 +92,8 @@ namespace WebGLSupport
         {
             if (checker.NeedRebuild())
             {
-                input.Rebuild(CanvasUpdate.LatePreRender);
                 input.textComponent.SetAllDirty();
+                input.Rebuild(CanvasUpdate.LatePreRender);
             }
         }
     }

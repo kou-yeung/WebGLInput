@@ -4,9 +4,9 @@
 
 #if TMP_WEBGL_SUPPORT
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 using WebGLSupport.Detail;
+using UnityEngine.UI;
 
 namespace WebGLSupport
 {
@@ -17,6 +17,7 @@ namespace WebGLSupport
     {
         TMP_InputField input;
         RebuildChecker checker;
+        Coroutine delayedGraphicRebuild;
 
         public bool ReadOnly { get { return input.readOnly; } }
 
@@ -100,6 +101,14 @@ namespace WebGLSupport
 
         public void Rebuild()
         {
+#if UNITY_2020_1_OR_NEWER
+            if (checker.NeedRebuild())
+            {
+                input.textComponent.SetVerticesDirty();
+                input.textComponent.SetLayoutDirty();
+                input.Rebuild(CanvasUpdate.LatePreRender);
+            }
+#else
             if (input.textComponent.enabled && checker.NeedRebuild())
             {
                 //================================
@@ -125,16 +134,16 @@ namespace WebGLSupport
                 // MEMO : 他にいい方法Rebuildがあれば対応する
                 // LayoutRebuilder.ForceRebuildLayoutImmediate(); で試してダメでした
                 input.textComponent.enabled = false;
-                input.Rebuild(CanvasUpdate.LatePreRender);
                 input.textComponent.SetAllDirty();
+                input.Rebuild(CanvasUpdate.LatePreRender);
             }
             else
             {
                 input.textComponent.enabled = true;
             }
+#endif
         }
     }
-
 }
 
 #endif // TMP_WEBGL_SUPPORT
