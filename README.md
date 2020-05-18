@@ -23,4 +23,5 @@ https://github.com/kou-yeung/WebGLInput/wiki/Support-FullScreen
 
 # insert \t use tab key instead of changing focus
 Add "WEBGLINPUT_TAB" to Scripting Define Symbols.
+
 and check "Enable Tab Text" at WebGLInput. 
