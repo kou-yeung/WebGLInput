@@ -62,6 +62,11 @@ namespace WebGLSupport
 
         [DllImport("__Internal")]
         public static extern void WebGLInputDelete(int id);
+
+#if WEBGLINPUT_TAB
+        [DllImport("__Internal")]
+        public static extern void WebGLInputEnableTabText(int id, bool enable);
+#endif
 #else
 
         public static int WebGLInputCreate(string canvasId, int x, int y, int width, int height, int fontsize, string text, bool isMultiLine, bool isPassword) { return 0; }
@@ -80,6 +85,11 @@ namespace WebGLSupport
         public static void WebGLInputText(int id, string text) { }
         public static bool WebGLInputIsFocus(int id) { return false; }
         public static void WebGLInputDelete(int id) { }
+
+#if WEBGLINPUT_TAB
+        public static void WebGLInputEnableTabText(int id, bool enable) { }
+#endif
+
 #endif
     }
 
@@ -87,6 +97,10 @@ namespace WebGLSupport
     {
         static Dictionary<int, WebGLInput> instances = new Dictionary<int, WebGLInput>();
         public static string CanvasId { get; set; }
+
+#if WEBGLINPUT_TAB
+        public bool enableTabText = false;
+#endif
 
         static WebGLInput()
         {
@@ -145,8 +159,10 @@ namespace WebGLSupport
             // default value : https://www.w3schools.com/tags/att_input_maxlength.asp
             WebGLInputPlugin.WebGLInputMaxLength(id, (input.characterLimit > 0) ? input.characterLimit : 524288);
             WebGLInputPlugin.WebGLInputFocus(id);
-
-            if(input.OnFocusSelectAll)
+#if WEBGLINPUT_TAB
+            WebGLInputPlugin.WebGLInputEnableTabText(id, enableTabText);
+#endif
+            if (input.OnFocusSelectAll)
             {
                 WebGLInputPlugin.WebGLInputSetSelectionRange(id, 0, input.text.Length);
             }

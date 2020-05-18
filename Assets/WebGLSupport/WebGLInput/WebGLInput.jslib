@@ -62,7 +62,18 @@ var WebGLInput = {
         input.addEventListener('keydown', function (e) {
             if ((e.which && e.which === 9) || (e.keyCode && e.keyCode === 9)) {
                 e.preventDefault();
-                Runtime.dynCall("vii", cb, [id, e.shiftKey ? -1 : 1]);
+
+				// if enable tab text
+				if(input.enableTabText){
+                    var val = input.value;
+                    var start = input.selectionStart;
+                    var end = input.selectionEnd;
+                    input.value = val.substr(0, start) + '\t' + val.substr(end, val.length);
+                    input.setSelectionRange(start + 1, start + 1);
+                    input.oninput();	// call oninput to exe ValueChange function!!
+				} else {
+				    Runtime.dynCall("vii", cb, [id, e.shiftKey ? -1 : 1]);
+				}
             }
 		});
 	},
@@ -128,6 +139,10 @@ var WebGLInput = {
         input.parentNode.removeChild(input);
         instances[id] = null;
     },
+	WebGLInputEnableTabText:function(id, enable) {
+        var input = instances[id];
+		input.enableTabText = enable;
+	},
 }
 
 autoAddDeps(WebGLInput, '$instances');
