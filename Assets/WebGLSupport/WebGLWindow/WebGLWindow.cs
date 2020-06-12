@@ -14,9 +14,13 @@ namespace WebGLSupport
         [DllImport("__Internal")]
         public static extern void WebGLWindowOnBlur(Action cb);
 
+        [DllImport("__Internal")]
+        public static extern void WebGLWindowInjectFullscreen();
+
 #else
         public static void WebGLWindowOnFocus(Action cb) { }
         public static void WebGLWindowOnBlur(Action cb) { }
+        public static void WebGLWindowInjectFullscreen() { }
 #endif
 
     }
@@ -32,6 +36,7 @@ namespace WebGLSupport
             Focus = true;
             WebGLWindowPlugin.WebGLWindowOnFocus(OnWindowFocus);
             WebGLWindowPlugin.WebGLWindowOnBlur(OnWindowBlur);
+            WebGLWindowPlugin.WebGLWindowInjectFullscreen();
         }
 
         [MonoPInvokeCallback(typeof(Action))]
