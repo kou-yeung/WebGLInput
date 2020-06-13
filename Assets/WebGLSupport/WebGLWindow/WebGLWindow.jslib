@@ -11,18 +11,30 @@ var WebGLWindow = {
     },
 	WebGLWindowInjectFullscreen : function () {
         document.makeFullscreen = function (id, keepAspectRatio) {
-			var getFullScreenObject = function () {
-				var doc = window.document;
-				var objFullScreen = doc.fullscreenElement || doc.mozFullScreenElement || doc.webkitFullscreenElement || doc.msFullscreenElement;
-				return (objFullScreen);
-			}
-			var eventFullScreen = function (callback) {
+            // get fullscreen object
+            var getFullScreenObject = function () {
+                var doc = window.document;
+                var objFullScreen = doc.fullscreenElement || doc.mozFullScreenElement || doc.webkitFullscreenElement || doc.msFullscreenElement;
+                return (objFullScreen);
+            }
+
+            // handle fullscreen event
+            var eventFullScreen = function (callback) {
                 document.addEventListener("fullscreenchange", callback, false);
                 document.addEventListener("webkitfullscreenchange", callback, false);
                 document.addEventListener("mozfullscreenchange", callback, false);
                 document.addEventListener("MSFullscreenChange", callback, false);
             }
-			var div = document.createElement("div");
+
+            var removeEventFullScreen = function (callback) {
+                document.removeEventListener("fullscreenchange", callback, false);
+                document.removeEventListener("webkitfullscreenchange", callback, false);
+                document.removeEventListener("mozfullscreenchange", callback, false);
+                document.removeEventListener("MSFullscreenChange", callback, false);
+            }
+
+            var div = document.createElement("div");
+            div.id = "webgl_fullscreen-div";
             document.body.appendChild(div);
 
             var canvas = document.getElementById(id);
@@ -35,7 +47,8 @@ var WebGLWindow = {
             var index = Array.from(beforeParent.children).findIndex(function (v) { return v == canvas; });
             div.appendChild(canvas);
 
-            eventFullScreen(function (e) {
+            // recv fullscreen function
+            var fullscreenFunc = function () {
                 if (getFullScreenObject()) {
                     if (keepAspectRatio) {
                         var ratio = Math.min(window.screen.width / beforeWidth, window.screen.height / beforeHeight);
@@ -55,8 +68,14 @@ var WebGLWindow = {
 
                     canvas.style.width = beforeWidth;
                     canvas.style.height = beforeHeight;
+
+                    // remove this function
+                    removeEventFullScreen(fullscreenFunc);
                 }
-            });
+            }
+
+            // listener fullscreen event
+            eventFullScreen(fullscreenFunc);
 
             if (div.requestFullscreen) div.requestFullscreen();
             else if (div.mozRequestFullScreen) div.mozRequestFullScreen();
