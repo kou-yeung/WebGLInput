@@ -34,7 +34,6 @@ var WebGLWindow = {
             }
 
             var div = document.createElement("div");
-            div.id = "webgl_fullscreen-div";
             document.body.appendChild(div);
 
             var canvas = document.getElementById(id);
@@ -55,19 +54,19 @@ var WebGLWindow = {
                         var width = Math.floor(beforeWidth * ratio);
                         var height = Math.floor(beforeHeight * ratio);
 
-                        canvas.style.width = width;
-                        canvas.style.height = height;
+                        canvas.style.width = width + 'px';
+                        canvas.style.height = height + 'px';;
                     } else {
-                        canvas.style.width = window.screen.width;
-                        canvas.style.height = window.screen.height;
+                        canvas.style.width = window.screen.width + 'px';;
+                        canvas.style.height = window.screen.height + 'px';;
                     }
 
                 } else {
+					canvas.style.width = beforeWidth + 'px';;
+                    canvas.style.height = beforeHeight + 'px';;
                     beforeParent.insertBefore(canvas, Array.from(beforeParent.children)[index]);
-                    div.parentNode.removeChild(div);
 
-                    canvas.style.width = beforeWidth;
-                    canvas.style.height = beforeHeight;
+                    div.parentNode.removeChild(div);
 
                     // remove this function
                     removeEventFullScreen(fullscreenFunc);
@@ -77,10 +76,10 @@ var WebGLWindow = {
             // listener fullscreen event
             eventFullScreen(fullscreenFunc);
 
-            if (div.requestFullscreen) div.requestFullscreen();
-            else if (div.mozRequestFullScreen) div.mozRequestFullScreen();
+            if (div.mozRequestFullScreen) div.mozRequestFullScreen();
             else if (div.webkitRequestFullScreen) div.webkitRequestFullScreen();
             else if (div.msRequestFullscreen) div.msRequestFullscreen();
+            else if (div.requestFullscreen) div.requestFullscreen();
 		}
 	},
 }
