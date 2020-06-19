@@ -16,7 +16,7 @@ namespace WebGLSupport
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
         [DllImport("__Internal")]
-        public static extern int WebGLInputCreate(string canvasId, int x, int y, int width, int height, int fontsize, string text, bool isMultiLine, bool isPassword);
+        public static extern int WebGLInputCreate(string canvasId, int x, int y, int width, int height, int fontsize, string text, string placeholder, bool isMultiLine, bool isPassword, bool isHidden);
 
         [DllImport("__Internal")]
         public static extern void WebGLInputEnterSubmit(int id, bool flag);
@@ -69,7 +69,7 @@ namespace WebGLSupport
 #endif
 #else
 
-        public static int WebGLInputCreate(string canvasId, int x, int y, int width, int height, int fontsize, string text, bool isMultiLine, bool isPassword) { return 0; }
+        public static int WebGLInputCreate(string canvasId, int x, int y, int width, int height, int fontsize, string text, string placeholder, bool isMultiLine, bool isPassword, bool isHidden) { return 0; }
         public static void WebGLInputEnterSubmit(int id, bool flag) { }
         public static void WebGLInputTab(int id, Action<int, int> cb) { }
         public static void WebGLInputFocus(int id) { }
@@ -117,6 +117,9 @@ namespace WebGLSupport
         IInputField input;
         bool blueBlock = false;
 
+        [TooltipAttribute("show input element on canvas. this will make you select text by drag.")]
+        public bool showHtmlElement = false;
+
         private IInputField Setup()
         {
             if (GetComponent<InputField>()) return new WrappedInputField(GetComponent<InputField>());
@@ -143,11 +146,18 @@ namespace WebGLSupport
             var rect = GetScreenCoordinates(input.RectTransform());
             bool isPassword = input.contentType == ContentType.Password;
 
-            var x = (int)(rect.x);
-            //var y = (int)(Screen.height - (rect.y + rect.height));
-            //id = WebGLInputPlugin.WebGLInputCreate(x, y, (int)rect.width, (int)rect.height, input.textComponent.fontSize, input.text);
-            var y = (int)(Screen.height - (rect.y));
-            id = WebGLInputPlugin.WebGLInputCreate(WebGLInput.CanvasId, x, y, (int)rect.width, (int)1, input.fontSize, input.text, input.lineType != LineType.SingleLine, isPassword);
+            if(showHtmlElement)
+            {
+                var x = (int)(rect.x);
+                var y = (int)(Screen.height - (rect.y + rect.height));
+                id = WebGLInputPlugin.WebGLInputCreate(WebGLInput.CanvasId, x, y, (int)rect.width, (int)rect.height, input.fontSize, input.text, input.placeholder, input.lineType != LineType.SingleLine, isPassword, false);
+            }
+            else
+            {
+                var x = (int)(rect.x);
+                var y = (int)(Screen.height - (rect.y));
+                id = WebGLInputPlugin.WebGLInputCreate(WebGLInput.CanvasId, x, y, (int)rect.width, (int)1, input.fontSize, input.text, input.placeholder, input.lineType != LineType.SingleLine, isPassword, true);
+            }
 
             instances[id] = this;
             WebGLInputPlugin.WebGLInputEnterSubmit(id, input.lineType != LineType.MultiLineNewline);

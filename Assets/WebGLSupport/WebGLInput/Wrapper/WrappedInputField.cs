@@ -20,6 +20,16 @@ namespace WebGLSupport
             set { input.text = value; }
         }
 
+        public string placeholder
+        {
+            get
+            {
+                if (!input.placeholder) return "";
+                var text = input.placeholder.GetComponent<Text>();
+                return text ? text.text : "";
+            }
+        }
+
         public int fontSize
         {
             get { return input.textComponent.fontSize; }
@@ -75,7 +85,7 @@ namespace WebGLSupport
 
         public RectTransform RectTransform()
         {
-            return input.textComponent.GetComponent<RectTransform>();
+            return input.GetComponent<RectTransform>();
         }
 
         public void ActivateInputField()

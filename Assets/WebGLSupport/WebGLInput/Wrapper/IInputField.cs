@@ -28,6 +28,7 @@ namespace WebGLSupport
         LineType lineType { get; }
         int fontSize { get; }
         string text { get; set; }
+        string placeholder { get; }
         int characterLimit { get; }
         int caretPosition { get; }
         bool isFocused { get; }

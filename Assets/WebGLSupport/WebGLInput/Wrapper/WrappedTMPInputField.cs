@@ -26,6 +26,15 @@ namespace WebGLSupport
             get { return input.text; }
             set { input.text = value; }
         }
+        public string placeholder
+        {
+            get
+            {
+                if (!input.placeholder) return "";
+                var text = input.placeholder.GetComponent<TMP_Text>();
+                return text ? text.text : "";
+            }
+        }
 
         public int fontSize
         {

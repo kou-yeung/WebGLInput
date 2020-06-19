@@ -1,7 +1,7 @@
 var WebGLInput = {
     $instances: [],
 
-    WebGLInputCreate: function (canvasId, x, y, width, height, fontsize, text, isMultiLine, isPassword) {
+    WebGLInputCreate: function (canvasId, x, y, width, height, fontsize, text, placeholder, isMultiLine, isPassword, isHidden) {
         var container = document.getElementById(Pointer_stringify(canvasId));
 		
 		var canvas = document.getElementsByTagName('canvas')[0];
@@ -25,14 +25,16 @@ var WebGLInput = {
         input.style.left = x + "px";
         input.style.width = width + "px";
         input.style.height = height + "px";
-        input.style.backgroundColor = '#00000000';
-        input.style.color = '#00000000';
-        input.style.outline = "none";
-		input.style.border = "hidden";
-		input.style.opacity = 0;
+
+		input.style.outlineWidth = 1 + 'px';
+		input.style.opacity = isHidden?0:1;
+		input.style.resize = 'none'; // for textarea
+		input.style.padding = '0px 1px';
 		input.style.cursor = "default";
+
 		input.spellcheck = false;
 		input.value = Pointer_stringify(text);
+		input.placeholder = Pointer_stringify(placeholder);
 		input.style.fontSize = fontsize + "px";
 		//input.setSelectionRange(0, input.value.length);
 		
