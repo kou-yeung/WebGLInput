@@ -6,7 +6,7 @@ support “copy and paste”
 
 support "tab" and "shift+tab" change focus to other InputField
 
-# Sample
+# DEMO
 http://kou-yeung.mygamesonline.org/WebGLInputSample/index.html
 
 # How to use
