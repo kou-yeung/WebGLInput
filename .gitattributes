@@ -1,0 +1,3 @@
+*.cs linguist-detectable=true
+*.shader linguist-detectable=false
+*.cginc linguist-detectable=false
