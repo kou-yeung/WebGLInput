@@ -10,7 +10,7 @@ support "tab" and "shift+tab" change focus to other InputField
 http://kou-yeung.mygamesonline.org/WebGLInputSample/index.html
 
 # How to use
-1.download WebGLSupport.unitypackage and import to project
+1.download [WebGLSupport.unitypackage](https://github.com/kou-yeung/WebGLInput/releases) and import to project
 
 2.add "WebGLInput" Component to InputField GameObject
 
