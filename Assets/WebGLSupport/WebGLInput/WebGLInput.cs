@@ -12,7 +12,7 @@ using System.Collections;
 
 namespace WebGLSupport
 {
-    class WebGLInputPlugin
+    internal class WebGLInputPlugin
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
         [DllImport("__Internal")]
@@ -65,7 +65,7 @@ namespace WebGLSupport
 
 #if WEBGLINPUT_TAB
         [DllImport("__Internal")]
-        public static extern void WebGLInputEnableTabText(int id, bool enable);
+        public static extern void WebGLInputOnFocusOut(int id, bool enable);
 #endif
 #else
 
@@ -113,9 +113,9 @@ namespace WebGLSupport
 #endif
         }
 
-        int id = -1;
+        internal int id = -1;
         IInputField input;
-        bool blueBlock = false;
+        bool blurBlock = false;
 
         [TooltipAttribute("show input element on canvas. this will make you select text by drag.")]
         public bool showHtmlElement = false;
@@ -136,17 +136,24 @@ namespace WebGLSupport
             // WebGL 以外、更新メソッドは動作しないようにします
             enabled = false;
 #endif
+            // モバイルの入力対応
+            if(Application.isMobilePlatform)
+            {
+                gameObject.AddComponent<WebGLInputMobile>();
+            }
         }
+
         /// <summary>
         /// 対象が選択されたとき
         /// </summary>
         /// <param name="eventData"></param>
-        public void OnSelect(/*BaseEventData eventData*/)
+        public void OnSelect()
         {
             var rect = GetScreenCoordinates(input.RectTransform());
             bool isPassword = input.contentType == ContentType.Password;
 
-            if(showHtmlElement)
+            // モバイルの場合、強制表示する
+            if(showHtmlElement || Application.isMobilePlatform)
             {
                 var x = (int)(rect.x);
                 var y = (int)(Screen.height - (rect.y + rect.height));
@@ -182,7 +189,7 @@ namespace WebGLSupport
 
         void OnWindowBlur()
         {
-            blueBlock = true;
+            blurBlock = true;
         }
 
         /// <summary>
@@ -219,8 +226,10 @@ namespace WebGLSupport
             return new Rect(min.x, min.y, max.x - min.x, max.y - min.y);
         }
 
-        void DeactivateInputField()
+        internal void DeactivateInputField()
         {
+            if (!instances.ContainsKey(id)) return;
+
             WebGLInputPlugin.WebGLInputDelete(id);
             input.DeactivateInputField();
             instances.Remove(id);
@@ -242,15 +251,15 @@ namespace WebGLSupport
 #if UNITY_WEBGL && !UNITY_EDITOR
             UnityEngine.WebGLInput.captureAllKeyboardInput = true;
 #endif
-            instances[id].StartCoroutine(Blue(id));
+            instances[id].StartCoroutine(Blur(id));
         }
-        static IEnumerator Blue(int id)
+        static IEnumerator Blur(int id)
         {
             yield return null;
             if (!instances.ContainsKey(id)) yield break;
 
-            var block = instances[id].blueBlock;    // get blue block state
-            instances[id].blueBlock = false;        // reset instalce block state
+            var block = instances[id].blurBlock;    // get blur block state
+            instances[id].blurBlock = false;        // reset instalce block state
             if (block) yield break;                 // if block. break it!!
 
             instances[id].DeactivateInputField();
@@ -305,7 +314,9 @@ namespace WebGLSupport
             // 未登録の場合、選択する
             if (!instances.ContainsKey(id))
             {
+                if (Application.isMobilePlatform) return;
                 OnSelect();
+
             } else if(!WebGLInputPlugin.WebGLInputIsFocus(id))
             {
                 // focus this id
