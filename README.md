@@ -6,6 +6,8 @@ support “copy and paste”
 
 support "tab" and "shift+tab" change focus to other InputField
 
+support mobile. (Experiment)
+
 # DEMO
 http://kou-yeung.mygamesonline.org/WebGLInputSample/index.html
 
