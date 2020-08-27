@@ -3,8 +3,15 @@ var WebGLInput = {
 
     WebGLInputCreate: function (canvasId, x, y, width, height, fontsize, text, placeholder, isMultiLine, isPassword, isHidden) {
         var container = document.getElementById(Pointer_stringify(canvasId));
-		
-		var canvas = document.getElementsByTagName('canvas')[0];
+        var canvas = document.getElementsByTagName('canvas')[0];
+
+        // if container is null and have canvas
+        if (!container && canvas)
+        {
+            // set the container to canvas.parentNode
+            container = canvas.parentNode;
+        }
+
 		if(canvas)
 		{
 			var scaleX = container.offsetWidth / canvas.width;
