@@ -137,7 +137,7 @@ namespace WebGLSupport
             enabled = false;
 #endif
             // モバイルの入力対応
-            if(Application.isMobilePlatform)
+            if (Application.isMobilePlatform)
             {
                 gameObject.AddComponent<WebGLInputMobile>();
             }
@@ -152,18 +152,20 @@ namespace WebGLSupport
             var rect = GetScreenCoordinates(input.RectTransform());
             bool isPassword = input.contentType == ContentType.Password;
 
+            var fontSize = Mathf.Max(14, input.fontSize); // limit font size : 14 !!
+
             // モバイルの場合、強制表示する
-            if(showHtmlElement || Application.isMobilePlatform)
+            if (showHtmlElement || Application.isMobilePlatform)
             {
                 var x = (int)(rect.x);
                 var y = (int)(Screen.height - (rect.y + rect.height));
-                id = WebGLInputPlugin.WebGLInputCreate(WebGLInput.CanvasId, x, y, (int)rect.width, (int)rect.height, input.fontSize, input.text, input.placeholder, input.lineType != LineType.SingleLine, isPassword, false);
+                id = WebGLInputPlugin.WebGLInputCreate(WebGLInput.CanvasId, x, y, (int)rect.width, (int)rect.height, fontSize, input.text, input.placeholder, input.lineType != LineType.SingleLine, isPassword, false);
             }
             else
             {
                 var x = (int)(rect.x);
                 var y = (int)(Screen.height - (rect.y));
-                id = WebGLInputPlugin.WebGLInputCreate(WebGLInput.CanvasId, x, y, (int)rect.width, (int)1, input.fontSize, input.text, input.placeholder, input.lineType != LineType.SingleLine, isPassword, true);
+                id = WebGLInputPlugin.WebGLInputCreate(WebGLInput.CanvasId, x, y, (int)rect.width, (int)1, fontSize, input.text, input.placeholder, input.lineType != LineType.SingleLine, isPassword, true);
             }
 
             instances[id] = this;
@@ -204,12 +206,15 @@ namespace WebGLSupport
 
             // try to support RenderMode:WorldSpace
             var canvas = uiElement.GetComponentInParent<Canvas>();
-            var hasCamera = (canvas.renderMode != RenderMode.ScreenSpaceOverlay) && (canvas.worldCamera != null);
-            if (canvas && hasCamera )
+            var useCamera = (canvas.renderMode != RenderMode.ScreenSpaceOverlay);
+            if (canvas && useCamera)
             {
+                var camera = canvas.worldCamera;
+                if (!camera) camera = Camera.main;
+
                 for (var i = 0; i < worldCorners.Length; i++)
                 {
-                    worldCorners[i] = canvas.worldCamera.WorldToScreenPoint(worldCorners[i]);
+                    worldCorners[i] = camera.WorldToScreenPoint(worldCorners[i]);
                 }
             }
 
@@ -272,11 +277,11 @@ namespace WebGLSupport
 
             var instance = instances[id];
             var index = instance.input.caretPosition;
-            if(!instance.input.ReadOnly)
+            if (!instance.input.ReadOnly)
             {
                 instance.input.text = value;
             }
-            
+
 
             // InputField.ContentType.Name が Name の場合、先頭文字が強制的大文字になるため小文字にして比べる
             if (instance.input.contentType == ContentType.Name)
@@ -317,7 +322,8 @@ namespace WebGLSupport
                 if (Application.isMobilePlatform) return;
                 OnSelect();
 
-            } else if(!WebGLInputPlugin.WebGLInputIsFocus(id))
+            }
+            else if (!WebGLInputPlugin.WebGLInputIsFocus(id))
             {
                 // focus this id
                 WebGLInputPlugin.WebGLInputFocus(id);
