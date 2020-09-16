@@ -246,6 +246,7 @@ namespace WebGLSupport
         static void OnFocus(int id)
         {
 #if UNITY_WEBGL && !UNITY_EDITOR
+            Input.ResetInputAxes(); // Inputの状態リセット
             UnityEngine.WebGLInput.captureAllKeyboardInput = false;
 #endif
         }
@@ -255,9 +256,11 @@ namespace WebGLSupport
         {
 #if UNITY_WEBGL && !UNITY_EDITOR
             UnityEngine.WebGLInput.captureAllKeyboardInput = true;
+            Input.ResetInputAxes(); // Inputの状態リセット
 #endif
             instances[id].StartCoroutine(Blur(id));
         }
+
         static IEnumerator Blur(int id)
         {
             yield return null;
@@ -281,7 +284,6 @@ namespace WebGLSupport
             {
                 instance.input.text = value;
             }
-
 
             // InputField.ContentType.Name が Name の場合、先頭文字が強制的大文字になるため小文字にして比べる
             if (instance.input.contentType == ContentType.Name)
@@ -345,6 +347,18 @@ namespace WebGLSupport
 
             input.Rebuild();
         }
+
+        private void OnDestroy()
+        {
+            if (!instances.ContainsKey(id)) return;
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+            UnityEngine.WebGLInput.captureAllKeyboardInput = true;
+            Input.ResetInputAxes(); // Inputの状態リセット
+#endif
+            instances[id].DeactivateInputField();
+        }
+
         private void OnEnable()
         {
             WebGLInputTabFocus.Add(this);
