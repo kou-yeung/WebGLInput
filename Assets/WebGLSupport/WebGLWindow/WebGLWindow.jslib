@@ -48,7 +48,7 @@ var WebGLWindow = {
 
             // recv fullscreen function
             var fullscreenFunc = function () {
-                if (getFullScreenObject()) {
+                if (WebGLWindow.WebGLWindowGetFullscreen()) {
                     if (keepAspectRatio) {
                         var ratio = Math.min(window.screen.width / beforeWidth, window.screen.height / beforeHeight);
                         var width = Math.floor(beforeWidth * ratio);
@@ -82,6 +82,25 @@ var WebGLWindow = {
             else if (div.requestFullscreen) div.requestFullscreen();
 		}
 	},
+    WebGLWindowSetFullscreen: function (id, enable) {
+
+        if (WebGLWindow.WebGLWindowGetFullscreen() == enable) return;
+
+        if (enable)
+        {
+            document.makeFullscreen(Pointer_stringify(id));
+        }
+        else {
+            var doc = window.document;
+            var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+            cancelFullScreen();
+        }
+    },
+    WebGLWindowGetFullscreen: function () {
+        var doc = window.document;
+        var getFullScreenObject = doc.fullscreenElement || doc.mozFullScreenElement || doc.webkitFullscreenElement || doc.msFullscreenElement;
+        return (objFullScreen)();
+    },
 }
 
 mergeInto(LibraryManager.library, WebGLWindow);
