@@ -65,7 +65,7 @@ namespace WebGLSupport
 
 #if WEBGLINPUT_TAB
         [DllImport("__Internal")]
-        public static extern void WebGLInputOnFocusOut(int id, bool enable);
+        public static extern void WebGLInputEnableTabText(int id, bool enable);
 #endif
 #else
 
