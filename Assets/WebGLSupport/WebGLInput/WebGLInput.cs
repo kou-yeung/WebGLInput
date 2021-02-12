@@ -298,7 +298,7 @@ namespace WebGLSupport
             if (value != instance.input.text)
             {
                 WebGLInputPlugin.WebGLInputText(id, instance.input.text);
-                WebGLInputPlugin.WebGLInputSetSelectionRange(id, index, index);
+                WebGLInputPlugin.WebGLInputSetSelectionRange(id, index+1, index+1);
             }
         }
         [MonoPInvokeCallback(typeof(Action<int, string>))]
