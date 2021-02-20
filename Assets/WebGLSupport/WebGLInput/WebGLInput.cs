@@ -279,7 +279,6 @@ namespace WebGLSupport
             if (!instances.ContainsKey(id)) return;
 
             var instance = instances[id];
-            var index = instance.input.caretPosition;
             if (!instance.input.ReadOnly)
             {
                 instance.input.text = value;
@@ -297,8 +296,14 @@ namespace WebGLSupport
             // InputField の ContentType による整形したテキストを HTML の input に再設定します
             if (value != instance.input.text)
             {
+                var start = WebGLInputPlugin.WebGLInputSelectionStart(id);
+                var end = WebGLInputPlugin.WebGLInputSelectionEnd(id);
+                // take the offset.when char remove from input.
+                var offset = instance.input.text.Length - value.Length;
+
                 WebGLInputPlugin.WebGLInputText(id, instance.input.text);
-                WebGLInputPlugin.WebGLInputSetSelectionRange(id, index, index);
+                // reset the input element selection range!!
+                WebGLInputPlugin.WebGLInputSetSelectionRange(id, start + offset, end + offset);
             }
         }
         [MonoPInvokeCallback(typeof(Action<int, string>))]
