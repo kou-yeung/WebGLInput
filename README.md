@@ -9,7 +9,7 @@ support "tab" and "shift+tab" change focus to other InputField
 support mobile. (Experiment)
 
 # DEMO
-https://unityroom.com/games/webglinput_test
+https://unityroom.com/games/webglinput
 
 # How to use
 1.download [WebGLSupport.unitypackage](https://github.com/kou-yeung/WebGLInput/releases) and import to project
