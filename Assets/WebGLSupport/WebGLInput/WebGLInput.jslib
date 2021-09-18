@@ -1,8 +1,13 @@
 var WebGLInput = {
     $instances: [],
-
+	WebGLInputInit : function() {
+		// Remove the `Runtime` object from "v1.37.27: 12/24/2017"
+		// if Runtime not defined. create and add functon!!
+		if(typeof Runtime === "undefined") Runtime = { dynCall : dynCall }
+	},
     WebGLInputCreate: function (canvasId, x, y, width, height, fontsize, text, placeholder, isMultiLine, isPassword, isHidden) {
-        var container = document.getElementById(Pointer_stringify(canvasId));
+
+        var container = document.getElementById(UTF8ToString(canvasId));
         var canvas = document.getElementsByTagName('canvas')[0];
 
         // if container is null and have canvas
@@ -40,8 +45,8 @@ var WebGLInput = {
 		input.style.cursor = "default";
 
 		input.spellcheck = false;
-		input.value = Pointer_stringify(text);
-		input.placeholder = Pointer_stringify(placeholder);
+		input.value = UTF8ToString(text);
+		input.placeholder = UTF8ToString(placeholder);
 		input.style.fontSize = fontsize + "px";
 		//input.setSelectionRange(0, input.value.length);
 		
@@ -141,7 +146,7 @@ var WebGLInput = {
 	},
 	WebGLInputText:function(id, text){
         var input = instances[id];
-		input.value = Pointer_stringify(text);
+		input.value = UTF8ToString(text);
 	},
 	WebGLInputDelete:function(id){
         var input = instances[id];

@@ -16,6 +16,8 @@ namespace WebGLSupport
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
         [DllImport("__Internal")]
+        public static extern void WebGLInputInit();
+        [DllImport("__Internal")]
         public static extern int WebGLInputCreate(string canvasId, int x, int y, int width, int height, int fontsize, string text, string placeholder, bool isMultiLine, bool isPassword, bool isHidden);
 
         [DllImport("__Internal")]
@@ -68,7 +70,7 @@ namespace WebGLSupport
         public static extern void WebGLInputEnableTabText(int id, bool enable);
 #endif
 #else
-
+        public static void WebGLInputInit() {}
         public static int WebGLInputCreate(string canvasId, int x, int y, int width, int height, int fontsize, string text, string placeholder, bool isMultiLine, bool isPassword, bool isHidden) { return 0; }
         public static void WebGLInputEnterSubmit(int id, bool flag) { }
         public static void WebGLInputTab(int id, Action<int, int> cb) { }
@@ -111,6 +113,7 @@ namespace WebGLSupport
 #else
             WebGLInput.CanvasId = "gameContainer";
 #endif
+            WebGLInputPlugin.WebGLInputInit();
         }
 
         internal int id = -1;
