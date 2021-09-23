@@ -9,6 +9,7 @@ using System;
 using AOT;
 using System.Runtime.InteropServices; // for DllImport
 using System.Collections;
+using UnityEngine.EventSystems;
 
 namespace WebGLSupport
 {
@@ -18,7 +19,7 @@ namespace WebGLSupport
         [DllImport("__Internal")]
         public static extern void WebGLInputInit();
         [DllImport("__Internal")]
-        public static extern int WebGLInputCreate(string canvasId, int x, int y, int width, int height, int fontsize, string text, string placeholder, bool isMultiLine, bool isPassword, bool isHidden);
+        public static extern int WebGLInputCreate(string canvasId, int x, int y, int width, int height, int fontsize, string text, string placeholder, bool isMultiLine, bool isPassword, bool isHidden, bool isMobile);
 
         [DllImport("__Internal")]
         public static extern void WebGLInputEnterSubmit(int id, bool flag);
@@ -65,13 +66,16 @@ namespace WebGLSupport
         [DllImport("__Internal")]
         public static extern void WebGLInputDelete(int id);
 
+        [DllImport("__Internal")]
+        public static extern void WebGLInputForceBlur(int id);
+
 #if WEBGLINPUT_TAB
         [DllImport("__Internal")]
         public static extern void WebGLInputEnableTabText(int id, bool enable);
 #endif
 #else
         public static void WebGLInputInit() {}
-        public static int WebGLInputCreate(string canvasId, int x, int y, int width, int height, int fontsize, string text, string placeholder, bool isMultiLine, bool isPassword, bool isHidden) { return 0; }
+        public static int WebGLInputCreate(string canvasId, int x, int y, int width, int height, int fontsize, string text, string placeholder, bool isMultiLine, bool isPassword, bool isHidden, bool isMobile) { return 0; }
         public static void WebGLInputEnterSubmit(int id, bool flag) { }
         public static void WebGLInputTab(int id, Action<int, int> cb) { }
         public static void WebGLInputFocus(int id) { }
@@ -87,6 +91,7 @@ namespace WebGLSupport
         public static void WebGLInputText(int id, string text) { }
         public static bool WebGLInputIsFocus(int id) { return false; }
         public static void WebGLInputDelete(int id) { }
+        public static void WebGLInputForceBlur(int id) { }
 
 #if WEBGLINPUT_TAB
         public static void WebGLInputEnableTabText(int id, bool enable) { }
@@ -147,29 +152,40 @@ namespace WebGLSupport
         }
 
         /// <summary>
-        /// 対象が選択されたとき
+        /// Get the element rect of input
         /// </summary>
-        /// <param name="eventData"></param>
-        public void OnSelect()
+        /// <returns></returns>
+        RectInt GetElemetRect()
         {
             var rect = GetScreenCoordinates(input.RectTransform());
-            bool isPassword = input.contentType == ContentType.Password;
-
-            var fontSize = Mathf.Max(14, input.fontSize); // limit font size : 14 !!
-
             // モバイルの場合、強制表示する
             if (showHtmlElement || Application.isMobilePlatform)
             {
                 var x = (int)(rect.x);
                 var y = (int)(Screen.height - (rect.y + rect.height));
-                id = WebGLInputPlugin.WebGLInputCreate(WebGLInput.CanvasId, x, y, (int)rect.width, (int)rect.height, fontSize, input.text, input.placeholder, input.lineType != LineType.SingleLine, isPassword, false);
+                return new RectInt(x, y, (int)rect.width, (int)rect.height);
             }
             else
             {
                 var x = (int)(rect.x);
                 var y = (int)(Screen.height - (rect.y));
-                id = WebGLInputPlugin.WebGLInputCreate(WebGLInput.CanvasId, x, y, (int)rect.width, (int)1, fontSize, input.text, input.placeholder, input.lineType != LineType.SingleLine, isPassword, true);
+                return new RectInt(x, y, (int)rect.width, (int)1);
             }
+        }
+        /// <summary>
+        /// 対象が選択されたとき
+        /// </summary>
+        /// <param name="eventData"></param>
+        public void OnSelect()
+        {
+            var rect = GetElemetRect();
+            bool isPassword = input.contentType == ContentType.Password;
+
+            var fontSize = Mathf.Max(14, input.fontSize); // limit font size : 14 !!
+
+            // モバイルの場合、強制表示する
+            var isHidden = !(showHtmlElement || Application.isMobilePlatform);
+            id = WebGLInputPlugin.WebGLInputCreate(WebGLInput.CanvasId, rect.x, rect.y, rect.width, rect.height, fontSize, input.text, input.placeholder, input.lineType != LineType.SingleLine, isPassword, isHidden, Application.isMobilePlatform);
 
             instances[id] = this;
             WebGLInputPlugin.WebGLInputEnterSubmit(id, input.lineType != LineType.MultiLineNewline);
@@ -323,15 +339,27 @@ namespace WebGLSupport
             WebGLInputTabFocus.OnTab(instances[id], value);
         }
 
+        //void CheckMobile()
+        //{
+        //    if (!Application.isMobilePlatform) return;
+        //    if (!instances.ContainsKey(id)) return;
+        //    var current = EventSystem.current.currentSelectedGameObject;
+        //    if (current.TryGetComponent<WebGLInput>(out var component)) return;    // inputだったら処理しない
+        //    WebGLInputPlugin.WebGLInputForceBlur(id);   // Input ではないし、キーボードを閉じる
+        //}
         void Update()
         {
-            if (input == null || !input.isFocused) return;
+            if (input == null || !input.isFocused)
+            {
+                //CheckMobile();
+                return;
+            }
+
             // 未登録の場合、選択する
             if (!instances.ContainsKey(id))
             {
                 if (Application.isMobilePlatform) return;
                 OnSelect();
-
             }
             else if (!WebGLInputPlugin.WebGLInputIsFocus(id))
             {
