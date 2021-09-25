@@ -120,9 +120,9 @@ namespace WebGLSupport
 #endif
             WebGLInputPlugin.WebGLInputInit();
         }
-
+        public int Id { get { return id; } }
         internal int id = -1;
-        IInputField input;
+        public IInputField input;
         bool blurBlock = false;
 
         [TooltipAttribute("show input element on canvas. this will make you select text by drag.")]
@@ -178,6 +178,8 @@ namespace WebGLSupport
         /// <param name="eventData"></param>
         public void OnSelect()
         {
+            if (id != -1) throw new Exception("OnSelect : id != -1");
+
             var rect = GetElemetRect();
             bool isPassword = input.contentType == ContentType.Password;
 
@@ -288,7 +290,6 @@ namespace WebGLSupport
             var block = instances[id].blurBlock;    // get blur block state
             instances[id].blurBlock = false;        // reset instalce block state
             if (block) yield break;                 // if block. break it!!
-
             instances[id].DeactivateInputField();
         }
 
@@ -339,32 +340,37 @@ namespace WebGLSupport
             WebGLInputTabFocus.OnTab(instances[id], value);
         }
 
-        //void CheckMobile()
-        //{
-        //    if (!Application.isMobilePlatform) return;
-        //    if (!instances.ContainsKey(id)) return;
-        //    var current = EventSystem.current.currentSelectedGameObject;
-        //    if (current.TryGetComponent<WebGLInput>(out var component)) return;    // inputだったら処理しない
-        //    WebGLInputPlugin.WebGLInputForceBlur(id);   // Input ではないし、キーボードを閉じる
-        //}
         void Update()
         {
             if (input == null || !input.isFocused)
             {
-                //CheckMobile();
+                CheckOutFocus();
                 return;
             }
 
             // 未登録の場合、選択する
             if (!instances.ContainsKey(id))
             {
-                if (Application.isMobilePlatform) return;
-                OnSelect();
+                if (Application.isMobilePlatform)
+                {
+                    return;
+                } else
+                {
+                    OnSelect();
+                }
             }
             else if (!WebGLInputPlugin.WebGLInputIsFocus(id))
             {
-                // focus this id
-                WebGLInputPlugin.WebGLInputFocus(id);
+                if (Application.isMobilePlatform)
+                {
+                    //input.DeactivateInputField();
+                    return;
+                }
+                else
+                {
+                    // focus this id
+                    WebGLInputPlugin.WebGLInputFocus(id);
+                }
             }
 
             var start = WebGLInputPlugin.WebGLInputSelectionStart(id);
@@ -392,7 +398,7 @@ namespace WebGLSupport
             UnityEngine.WebGLInput.captureAllKeyboardInput = true;
             Input.ResetInputAxes(); // Inputの状態リセット
 #endif
-            instances[id].DeactivateInputField();
+            DeactivateInputField();
         }
 
         private void OnEnable()
@@ -410,6 +416,15 @@ namespace WebGLSupport
             var res = b.y.CompareTo(a.y);
             if (res == 0) res = a.x.CompareTo(b.x);
             return res;
+        }
+
+        public void CheckOutFocus()
+        {
+            if (!Application.isMobilePlatform) return;
+            if (!instances.ContainsKey(id)) return;
+            var current = EventSystem.current.currentSelectedGameObject;
+            if (current != null) return;
+            WebGLInputPlugin.WebGLInputForceBlur(id);   // Input ではないし、キーボードを閉じる
         }
 
         /// <summary>
