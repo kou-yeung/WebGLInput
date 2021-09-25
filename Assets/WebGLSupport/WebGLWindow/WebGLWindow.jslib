@@ -9,6 +9,11 @@ var WebGLWindow = {
             Runtime.dynCall("v", cb, []);
         });
     },
+	WebGLWindowOnResize: function(cb) {
+        window.addEventListener('resize', function () {
+            Runtime.dynCall("v", cb, []);
+        });
+	},
 	WebGLWindowInjectFullscreen : function () {
         document.makeFullscreen = function (id, keepAspectRatio) {
             // get fullscreen object

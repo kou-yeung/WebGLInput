@@ -69,7 +69,13 @@ namespace WebGLSupport
         [MonoPInvokeCallback(typeof(Action<int>))]
         static void OnFocusOut(int id)
         {
-            Debug.Log(string.Format("OnFocusOut:{0}", id));
+            var @this = instances[id];
+            @this.StartCoroutine(ExecFocusOut(id));
+        }
+
+        static IEnumerator ExecFocusOut(int id)
+        {
+            yield return null;  // wait one frame.
             var @this = instances[id];
             @this.GetComponent<WebGLInput>().DeactivateInputField();
             // release
