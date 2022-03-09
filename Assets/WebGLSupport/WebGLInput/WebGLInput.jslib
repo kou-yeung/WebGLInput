@@ -128,14 +128,14 @@ var WebGLInput = {
 	WebGLInputOnValueChange:function(id, cb){
         var input = instances[id];
         input.oninput = function () {
-	    var value = allocate(intArrayFromString(input.value), ALLOC_NORMAL);
+	        var value = allocate(intArrayFromString(input.value), ALLOC_NORMAL);
             Runtime.dynCall("vii", cb, [id,value]);
         };
     },
 	WebGLInputOnEditEnd:function(id, cb){
         var input = instances[id];
         input.onchange = function () {
-	    var value = allocate(intArrayFromString(input.value),  ALLOC_NORMAL);
+	        var value = allocate(intArrayFromString(input.value),  ALLOC_NORMAL);
             Runtime.dynCall("vii", cb, [id,value]);
         };
     },
