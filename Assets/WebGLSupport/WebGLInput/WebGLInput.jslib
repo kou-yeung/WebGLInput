@@ -8,7 +8,7 @@ var WebGLInput = {
     WebGLInputCreate: function (canvasId, x, y, width, height, fontsize, text, placeholder, isMultiLine, isPassword, isHidden, isMobile) {
 
         var container = document.getElementById(UTF8ToString(canvasId));
-        var canvas = document.getElementsByTagName('canvas')[0];
+        var canvas = container.getElementsByTagName('canvas')[0];
 
         // if container is null and have canvas
         if (!container && canvas)
