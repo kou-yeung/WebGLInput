@@ -1,4 +1,9 @@
 var WebGLWindow = {
+	WebGLWindowInit : function() {
+		// Remove the `Runtime` object from "v1.37.27: 12/24/2017"
+		// if Runtime not defined. create and add functon!!
+		if(typeof Runtime === "undefined") Runtime = { dynCall : dynCall }
+	},
     WebGLWindowOnFocus: function (cb) {
         window.addEventListener('focus', function () {
             Runtime.dynCall("v", cb, []);
