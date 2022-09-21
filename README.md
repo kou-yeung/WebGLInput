@@ -12,7 +12,7 @@ support mobile. (Experiment)
 https://unityroom.com/games/webglinput
 
 # How to use
-1.download [WebGLSupport.unitypackage](https://github.com/kou-yeung/WebGLInput/releases) and import to project
+1.open the Unity Package Manager and add this package from git url: `https://github.com/decentraland/webgl-ime-input.git`
 
 2.add "WebGLInput" Component to InputField GameObject
 

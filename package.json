@@ -1,0 +1,22 @@
+{
+  "name": "com.decentraland.webgl-ime-input",
+  "displayName": "WebGL IME Input",
+  "description": "IME for Unity WebGL",
+  "version": "1.0.0",
+  "unity": "2018.2",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/decentraland/webgl-ime-input.git"
+  },
+  "author": "kou-yeung <kou_yeung@hotmail.com> (https://github.com/kou-yeung)",
+  "dependencies": {},
+  "keywords": [
+    "webgl",
+    "ime",
+    "input"
+  ],
+  "documentationUrl": "https://github.com/decentraland/webgl-ime-input",
+  "changelogUrl": "https://github.com/decentraland/webgl-ime-input/commits/master",
+  "licensesUrl": "https://github.com/decentraland/webgl-ime-input/blob/master/LICENSE"
+}
