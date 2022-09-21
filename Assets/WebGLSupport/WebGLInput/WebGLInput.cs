@@ -111,13 +111,7 @@ namespace WebGLSupport
 
         static WebGLInput()
         {
-#if UNITY_2020_1_OR_NEWER
-            WebGLInput.CanvasId = "unity-container";
-#elif UNITY_2019_1_OR_NEWER
-            WebGLInput.CanvasId = "unityContainer";
-#else
             WebGLInput.CanvasId = "gameContainer";
-#endif
             WebGLInputPlugin.WebGLInputInit();
         }
         public int Id { get { return id; } }
