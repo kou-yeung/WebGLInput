@@ -22,12 +22,16 @@ var WebGLInput = {
 			var scaleX = container.offsetWidth / canvas.width;
 			var scaleY = container.offsetHeight / canvas.height;
 
+		console.log(`VV: 2 - scaleX = ${scaleX}`);
+
 			if(scaleX && scaleY)
 			{
 				x *= scaleX;
 				width *= scaleX;
 				y *= scaleY;
 				height *= scaleY;
+				
+				console.log(`VV: 3 - x = ${x}`);
 			}
 		}
 
@@ -49,6 +53,8 @@ var WebGLInput = {
 			input.style.height = height + "px";
 			input.style.fontSize = fontsize + "px";
 		}
+		
+		console.log(`VV: 4 - input.style.left = ${input.style.left}`);
 
 		input.style.outlineWidth = 1 + 'px';
 		input.style.opacity = isHidden?0:1;

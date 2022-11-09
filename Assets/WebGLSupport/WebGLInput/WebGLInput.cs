@@ -157,10 +157,14 @@ namespace WebGLSupport
             {
                 var x = (int)(rect.x);
                 var y = (int)(Screen.height - (rect.y + rect.height));
+                
+                Debug.Log($"VV: 0 - showHtml or mobile {x}");
+
                 return new RectInt(x, y, (int)rect.width, (int)rect.height);
             }
             else
             {
+                Debug.Log($"VV: 0 - not showHtml or mobile {x}");
                 var x = (int)(rect.x);
                 var y = (int)(Screen.height - (rect.y));
                 return new RectInt(x, y, (int)rect.width, (int)1);
@@ -181,6 +185,8 @@ namespace WebGLSupport
 
             // モバイルの場合、強制表示する
             var isHidden = !(showHtmlElement || Application.isMobilePlatform);
+            Debug.Log($"VV: 1 - rect.x = {rect.x}, isHidden = {isHidden}");
+
             id = WebGLInputPlugin.WebGLInputCreate(WebGLInput.CanvasId, rect.x, rect.y, rect.width, rect.height, fontSize, input.text, input.placeholder, input.lineType != LineType.SingleLine, isPassword, isHidden, Application.isMobilePlatform);
 
             instances[id] = this;
