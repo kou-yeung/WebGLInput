@@ -164,9 +164,11 @@ namespace WebGLSupport
             }
             else
             {
-                Debug.Log($"VV: 0 - not showHtml or mobile {x}");
                 var x = (int)(rect.x);
                 var y = (int)(Screen.height - (rect.y));
+                
+                Debug.Log($"VV: 0 - not showHtml or mobile {x}");
+
                 return new RectInt(x, y, (int)rect.width, (int)1);
             }
         }
