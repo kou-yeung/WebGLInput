@@ -122,6 +122,8 @@ namespace WebGLSupport
         [TooltipAttribute("show input element on canvas. this will make you select text by drag.")]
         public bool showHtmlElement = false;
 
+        private RectInt prevRect = new RectInt();
+        
         private IInputField Setup()
         {
             if (GetComponent<InputField>()) return new WrappedInputField(GetComponent<InputField>());
@@ -175,6 +177,12 @@ namespace WebGLSupport
             if (id != -1) throw new Exception("OnSelect : id != -1");
 
             var rect = GetElemetRect();
+
+            if (Mathf.Abs(rect.x) > Screen.width || Mathf.Abs(rect.y) > Screen.height)
+                rect = prevRect;
+            else 
+                prevRect = rect;
+            
             bool isPassword = input.contentType == ContentType.Password;
 
             var fontSize = Mathf.Max(14, input.fontSize); // limit font size : 14 !!
