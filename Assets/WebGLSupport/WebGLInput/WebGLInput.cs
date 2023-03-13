@@ -38,7 +38,7 @@ namespace WebGLSupport
 
         [DllImport("__Internal")]
         public static extern void WebGLInputOnValueChange(int id, Action<int, string> cb);
-        
+
         [DllImport("__Internal")]
         public static extern void WebGLInputOnEditEnd(int id, Action<int, string> cb);
 
@@ -123,7 +123,7 @@ namespace WebGLSupport
         public bool showHtmlElement = false;
 
         private RectInt prevRect = new RectInt();
-        
+
         private IInputField Setup()
         {
             if (GetComponent<InputField>()) return new WrappedInputField(GetComponent<InputField>());
@@ -180,9 +180,9 @@ namespace WebGLSupport
 
             if (Mathf.Abs(rect.x) > Screen.width || Mathf.Abs(rect.y) > Screen.height)
                 rect = prevRect;
-            else 
+            else
                 prevRect = rect;
-            
+
             bool isPassword = input.contentType == ContentType.Password;
 
             var fontSize = Mathf.Max(14, input.fontSize); // limit font size : 14 !!
@@ -270,7 +270,7 @@ namespace WebGLSupport
         {
 #if UNITY_WEBGL && !UNITY_EDITOR
             Input.ResetInputAxes(); // Inputの状態リセット
-            UnityEngine.WebGLInput.captureAllKeyboardInput = false;
+            UnityEngine.WebGLInput.captureAllKeyboardInput = true;
 #endif
         }
 
