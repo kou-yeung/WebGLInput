@@ -270,7 +270,7 @@ namespace WebGLSupport
         {
 #if UNITY_WEBGL && !UNITY_EDITOR
             Input.ResetInputAxes(); // Inputの状態リセット
-            UnityEngine.WebGLInput.captureAllKeyboardInput = true;
+            //UnityEngine.WebGLInput.captureAllKeyboardInput = false;
 #endif
         }
 
