@@ -103,7 +103,7 @@ namespace WebGLSupport
     public class WebGLInput : MonoBehaviour, IComparable<WebGLInput>
     {
         static Dictionary<int, WebGLInput> instances = new Dictionary<int, WebGLInput>();
-        public static string CanvasId { get; set; }
+        public static string CanvasId { get; set; } = WebGLWindow.GetCanvasName();
 
 #if WEBGLINPUT_TAB
         public bool enableTabText = false;
@@ -111,13 +111,6 @@ namespace WebGLSupport
 
         static WebGLInput()
         {
-#if UNITY_2020_1_OR_NEWER
-            WebGLInput.CanvasId = "unity-container";
-#elif UNITY_2019_1_OR_NEWER
-            WebGLInput.CanvasId = "unityContainer";
-#else
-            WebGLInput.CanvasId = "gameContainer";
-#endif
             WebGLInputPlugin.WebGLInputInit();
         }
         public int Id { get { return id; } }
