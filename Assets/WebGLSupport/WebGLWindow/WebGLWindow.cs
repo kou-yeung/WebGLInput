@@ -21,12 +21,17 @@ namespace WebGLSupport
 
         [DllImport("__Internal")]
         public static extern void WebGLWindowInjectFullscreen();
+
+        [DllImport("__Internal")]
+        public static extern string WebGLWindowGetCanvasName();
 #else
         public static void WebGLWindowInit() { }
         public static void WebGLWindowOnFocus(Action cb) { }
         public static void WebGLWindowOnBlur(Action cb) { }
         public static void WebGLWindowOnResize(Action cb) { }
         public static void WebGLWindowInjectFullscreen() { }
+        public static string WebGLWindowGetCanvasName() { return ""; }
+
 #endif
 
     }
@@ -77,5 +82,11 @@ namespace WebGLSupport
         {
             Init();
         }
+
+        public static string GetCanvasName()
+        {
+            return WebGLWindowPlugin.WebGLWindowGetCanvasName();
+        }
+
     }
 }

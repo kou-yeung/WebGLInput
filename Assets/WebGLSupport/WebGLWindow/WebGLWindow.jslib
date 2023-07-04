@@ -4,6 +4,12 @@ var WebGLWindow = {
 		// if Runtime not defined. create and add functon!!
 		if(typeof Runtime === "undefined") Runtime = { dynCall : dynCall }
 	},
+    WebGLWindowGetCanvasName: function() {
+        var elements = document.getElementsByTagName('canvas');
+        var res = (elements.length <= 0) ? "" : elements[0].parentNode.id;
+        var intArray = intArrayFromString(res);
+        return (allocate.length <= 2) ? allocate(intArray, ALLOC_NORMAL):allocate(intArray, 'i8', ALLOC_NORMAL);
+	},
     WebGLWindowOnFocus: function (cb) {
         window.addEventListener('focus', function () {
             Runtime.dynCall("v", cb, []);
