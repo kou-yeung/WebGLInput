@@ -55,7 +55,7 @@ var WebGLInput = {
 		input.style.resize = 'none'; // for textarea
 		input.style.padding = '0px 1px';
 		input.style.cursor = "default";
-		input.style.touchAction = 'manipulation'; // for mobile
+		input.style.touchAction = 'none';
 
 		input.spellcheck = false;
 		input.value = UTF8ToString(text);
