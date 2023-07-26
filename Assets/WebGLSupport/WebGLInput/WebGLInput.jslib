@@ -60,6 +60,7 @@ var WebGLInput = {
 		input.spellcheck = false;
 		input.value = UTF8ToString(text);
 		input.placeholder = UTF8ToString(placeholder);
+		input.style.outlineColor = 'black';
 		
 		if(isPassword){
 			input.type = 'password';
