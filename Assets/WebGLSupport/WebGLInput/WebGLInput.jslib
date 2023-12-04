@@ -129,17 +129,21 @@ var WebGLInput = {
 	WebGLInputOnValueChange:function(id, cb){
         var input = instances[id];
         input.oninput = function () {
-			var intArray = intArrayFromString(input.value);
-            var value = (allocate.length <= 2) ? allocate(intArray, ALLOC_NORMAL):allocate(intArray, 'i8', ALLOC_NORMAL);
-            Runtime.dynCall("vii", cb, [id,value]);
+			var returnStr = input.value;
+		    var bufferSize = lengthBytesUTF8(returnStr) + 1;
+			var buffer = _malloc(bufferSize);
+			stringToUTF8(returnStr, buffer, bufferSize);
+			Runtime.dynCall("vii", cb, [id, buffer]);
         };
     },
 	WebGLInputOnEditEnd:function(id, cb){
         var input = instances[id];
         input.onchange = function () {
-			var intArray = intArrayFromString(input.value);
-            var value = (allocate.length <= 2) ? allocate(intArray, ALLOC_NORMAL):allocate(intArray, 'i8', ALLOC_NORMAL);
-            Runtime.dynCall("vii", cb, [id,value]);
+			var returnStr = input.value;
+		    var bufferSize = lengthBytesUTF8(returnStr) + 1;
+			var buffer = _malloc(bufferSize);
+			stringToUTF8(returnStr, buffer, bufferSize);
+			Runtime.dynCall("vii", cb, [id, buffer]);
         };
     },
 	WebGLInputSelectionStart:function(id){
