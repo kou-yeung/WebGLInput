@@ -6,9 +6,11 @@ var WebGLWindow = {
 	},
     WebGLWindowGetCanvasName: function() {
         var elements = document.getElementsByTagName('canvas');
-        var res = (elements.length <= 0) ? "" : elements[0].parentNode.id;
-        var intArray = intArrayFromString(res);
-        return (allocate.length <= 2) ? allocate(intArray, ALLOC_NORMAL):allocate(intArray, 'i8', ALLOC_NORMAL);
+        var returnStr = (elements.length <= 0) ? "" : elements[0].parentNode.id;
+		var bufferSize = lengthBytesUTF8(returnStr) + 1;
+		var buffer = _malloc(bufferSize);
+		stringToUTF8(returnStr, buffer, bufferSize);
+        return buffer;
 	},
     WebGLWindowOnFocus: function (cb) {
         window.addEventListener('focus', function () {
