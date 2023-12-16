@@ -36,6 +36,7 @@ namespace WebGLSupport
         int selectionAnchorPosition { get; set; }
         bool ReadOnly { get; }
         bool OnFocusSelectAll { get; }
+        bool EnableMobileSupport { get; }
 
         RectTransform RectTransform();
         void ActivateInputField();

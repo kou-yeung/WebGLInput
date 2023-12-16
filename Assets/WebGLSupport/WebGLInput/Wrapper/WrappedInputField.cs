@@ -77,6 +77,22 @@ namespace WebGLSupport
             get { return true; }
         }
 
+        public bool EnableMobileSupport
+        {
+            get
+            {
+                // 2022.1.0f1
+                // https://unity.com/ja/releases/editor/whats-new/2022.1.0#release-notes
+                // WebGL: Added mobile keyboard support for WebGL to enter text in UI input fields.
+#if UNITY_2022_1_OR_NEWER
+                // return false to use unity mobile keyboard support
+                return false;
+#else
+                return true;
+#endif
+            }
+        }
+
         public WrappedInputField(InputField input)
         {
             this.input = input;
