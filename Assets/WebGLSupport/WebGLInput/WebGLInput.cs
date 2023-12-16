@@ -138,10 +138,17 @@ namespace WebGLSupport
             // WebGL 以外、更新メソッドは動作しないようにします
             enabled = false;
 #endif
-            // モバイルの入力対応
+            // for mobile platform
             if (Application.isMobilePlatform)
             {
-                gameObject.AddComponent<WebGLInputMobile>();
+                if (input.EnableMobileSupport)
+                {
+                    gameObject.AddComponent<WebGLInputMobile>();
+                } else
+                {
+                    // when disable mobile input. disable self!
+                    enabled = false;
+                }
             }
         }
 

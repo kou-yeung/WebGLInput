@@ -109,6 +109,23 @@ namespace WebGLSupport
             get { return input.onFocusSelectAll; }
         }
 
+        public bool EnableMobileSupport
+        {
+            get
+            {
+                // [2023.2] Latest Development on TextMesh Pro
+                // https://forum.unity.com/threads/2023-2-latest-development-on-textmesh-pro.1434757/
+                // As of 2023.2, the TextMesh Pro package (com.unity.textmeshpro) has been merged into the uGUI package (com.unity.ugui) and the TextMesh Pro package has been deprecated.
+                // In this version, TextMeshPro is default support mobile input. so disable WebGLInput mobile support
+#if UNITY_2023_2_OR_NEWER
+                // return false to use unity mobile keyboard support
+                return false;
+#else
+                return true;
+#endif
+            }
+        }
+
         public WrappedTMPInputField(TMP_InputField input)
         {
             this.input = input;
