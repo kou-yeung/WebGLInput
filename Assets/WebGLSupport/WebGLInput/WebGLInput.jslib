@@ -5,7 +5,7 @@ var WebGLInput = {
 		// if Runtime not defined. create and add functon!!
 		if(typeof Runtime === "undefined") Runtime = { dynCall : dynCall }
 	},
-    WebGLInputCreate: function (canvasId, x, y, width, height, fontsize, text, placeholder, isMultiLine, isPassword, isHidden, isMobile) {
+    WebGLInputCreate: function (canvasId, x, y, width, height, fontsize, text, placeholder, isMultiLine, isPassword, isHidden, useGameLikeInput) {
 
         var container = document.getElementById(UTF8ToString(canvasId));
         var canvas = container.getElementsByTagName('canvas')[0];
@@ -30,26 +30,23 @@ var WebGLInput = {
 				height *= scaleY;
 			}
 		}
-
         var input = document.createElement(isMultiLine?"textarea":"input");
         input.style.position = "absolute";
-
-		if(isMobile) {
-			input.style.bottom = 1 + "vh";
-			input.style.left = 5 + "vw";
-			input.style.width = 90 + "vw";
-			input.style.height = (isMultiLine? 18 : 10) + "vh";
-			input.style.fontSize = 5 + "vh";
-			input.style.borderWidth = 5 + "px";
-			input.style.borderColor = "#000000";
-		} else {
-			input.style.top = y + "px";
-			input.style.left = x + "px";
-			input.style.width = width + "px";
-			input.style.height = height + "px";
-			input.style.fontSize = fontsize + "px";
-		}
-
+        if(useGameLikeInput) {
+            input.style.bottom = 1 + "vh";
+            input.style.left = 5 + "vw";
+            input.style.width = 90 + "vw";
+            input.style.height = (isMultiLine? 18 : 10) + "vh";
+            input.style.fontSize = 5 + "vh";
+            input.style.borderWidth = 5 + "px";
+            input.style.borderColor = "#000000";
+        } else {
+            input.style.top = y + "px";
+            input.style.left = x + "px";
+            input.style.width = width + "px";
+            input.style.height = height + "px";
+            input.style.fontSize = fontsize + "px";
+        }
 		input.style.outlineWidth = 1 + 'px';
 		input.style.opacity = isHidden?0:1;
 		input.style.resize = 'none'; // for textarea
@@ -66,7 +63,7 @@ var WebGLInput = {
 			input.type = 'password';
 		}
 
-		if(isMobile) {
+		if(useGameLikeInput) {
 			document.body.appendChild(input);
 		} else {
 	        container.appendChild(input);
