@@ -31,25 +31,13 @@ var WebGLInput = {
 			}
 		}
 
-        var input = document.createElement(isMultiLine?"textarea":"input");
-        input.style.position = "absolute";
-
-		if(isMobile) {
-			input.style.bottom = 1 + "vh";
-			input.style.left = 5 + "vw";
-			input.style.width = 90 + "vw";
-			input.style.height = (isMultiLine? 18 : 10) + "vh";
-			input.style.fontSize = 5 + "vh";
-			input.style.borderWidth = 5 + "px";
-			input.style.borderColor = "#000000";
-		} else {
-			input.style.top = y + "px";
-			input.style.left = x + "px";
-			input.style.width = width + "px";
-			input.style.height = height + "px";
-			input.style.fontSize = fontsize + "px";
-		}
-
+		ååååvar input = document.createElement(isMultiLine?"textarea":"input");
+		input.style.position = "absolute";
+		input.style.top = y + "px";
+		input.style.left = x + "px";
+		input.style.width = width + "px";
+		input.style.height = height + "px";
+		input.style.fontSize = fontsize + "px";
 		input.style.outlineWidth = 1 + 'px';
 		input.style.opacity = isHidden?0:1;
 		input.style.resize = 'none'; // for textarea
