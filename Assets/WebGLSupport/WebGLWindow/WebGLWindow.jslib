@@ -6,7 +6,16 @@ var WebGLWindow = {
 	},
     WebGLWindowGetCanvasName: function() {
         var elements = document.getElementsByTagName('canvas');
-        var returnStr = (elements.length <= 0) ? "" : elements[0].parentNode.id;
+        var returnStr = "";
+        if(elements.length >= 1)
+        {
+            returnStr = elements[0].parentNode.id;
+            // workaround : for WebGLTemplate:Minimal temp! body element not have id!
+            if(returnStr == '')
+            {
+                returnStr = elements[0].parentNode.id = 'WebGLWindow:Canvas:ParentNode';
+            }
+        }
 		var bufferSize = lengthBytesUTF8(returnStr) + 1;
 		var buffer = _malloc(bufferSize);
 		stringToUTF8(returnStr, buffer, bufferSize);
