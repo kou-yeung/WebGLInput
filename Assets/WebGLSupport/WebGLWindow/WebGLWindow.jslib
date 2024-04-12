@@ -109,6 +109,23 @@ var WebGLWindow = {
             else if (div.requestFullscreen) div.requestFullscreen();
 		}
 	},
+    MakeFullscreen : function (str) {
+        document.makeFullscreen(Pointer_stringify(str));
+	},
+    ExitFullscreen : function()
+    {
+        // get fullscreen object
+        var doc = window.document;
+        var objFullScreen = doc.fullscreenElement || doc.mozFullScreenElement || doc.webkitFullscreenElement || doc.msFullscreenElement;
+
+        if (objFullScreen)
+        {
+            if (document.exitFullscreen) document.exitFullscreen();
+            else if (document.msExitFullscreen) document.msExitFullscreen();
+            else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+            else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        }
+    },
 }
 
 mergeInto(LibraryManager.library, WebGLWindow);
