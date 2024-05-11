@@ -126,7 +126,7 @@ var WebGLWindow = {
 		}
 	},
     MakeFullscreen : function (str) {
-        document.makeFullscreen(Pointer_stringify(str));
+        document.makeFullscreen(UTF8ToString(str));
 	},
     ExitFullscreen : function() {
         // get fullscreen object
