@@ -1,7 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
+using WebGLSupport;
 
 
 public class Sample : MonoBehaviour
@@ -13,5 +12,10 @@ public class Sample : MonoBehaviour
     public void OnEndEdit(InputField o)
     {
         Debug.Log(string.Format("Sample:OnEndEdit[{1}] ({0})", o.text, o.name));
+    }
+
+    public void OnClickFullScreen()
+    {
+        WebGLWindow.SwitchFullscreen();
     }
 }

@@ -30,6 +30,9 @@ namespace WebGLSupport
 
         [DllImport("__Internal")]
         public static extern void ExitFullscreen();
+
+        [DllImport("__Internal")]
+        public static extern bool IsFullscreen();
 #else
         public static void WebGLWindowInit() { }
         public static void WebGLWindowOnFocus(Action cb) { }
@@ -39,6 +42,7 @@ namespace WebGLSupport
         public static string WebGLWindowGetCanvasName() { return ""; }
         public static void MakeFullscreen(string str) { }
         public static void ExitFullscreen() { }
+        public static bool IsFullscreen() { return false; }
 #endif
 
     }
@@ -95,14 +99,29 @@ namespace WebGLSupport
             return WebGLWindowPlugin.WebGLWindowGetCanvasName();
         }
 
-        public static void MakeFullscreen(string str)
+        public static void MakeFullscreen(string fullscreenElementName = null)
         {
-            WebGLWindowPlugin.MakeFullscreen(str);
+            WebGLWindowPlugin.MakeFullscreen(fullscreenElementName ?? GetCanvasName());
         }
 
         public static void ExitFullscreen()
         {
             WebGLWindowPlugin.ExitFullscreen();
+        }
+        public static bool IsFullscreen()
+        {
+            return WebGLWindowPlugin.IsFullscreen();
+        }
+        public static void SwitchFullscreen()
+        {
+            if (IsFullscreen())
+            {
+                ExitFullscreen();
+            }
+            else
+            {
+                MakeFullscreen();
+            }
         }
     }
 }

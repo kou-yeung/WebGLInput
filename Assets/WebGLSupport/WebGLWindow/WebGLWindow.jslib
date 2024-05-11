@@ -63,15 +63,23 @@ var WebGLWindow = {
             var div = document.createElement("div");
             document.body.appendChild(div);
 
-            var canvas = document.getElementById(id);
-            var beforeParent = canvas.parentNode;
-            var beforeStyle = window.getComputedStyle(canvas);
+            // save canvas size to originSize
+            var canvas = document.getElementsByTagName('canvas')[0];
+            var originSize = 
+            {
+                width : canvas.style.width,
+                height : canvas.style.height,
+            };
+
+            var fullscreenRoot = document.getElementById(id);
+            var beforeParent = fullscreenRoot.parentNode;
+            var beforeStyle = window.getComputedStyle(fullscreenRoot);
             var beforeWidth = parseInt(beforeStyle.width);
             var beforeHeight = parseInt(beforeStyle.height);
 
             // to keep element index after fullscreen
-            var index = Array.from(beforeParent.children).findIndex(function (v) { return v == canvas; });
-            div.appendChild(canvas);
+            var index = Array.from(beforeParent.children).findIndex(function (v) { return v == fullscreenRoot; });
+            div.appendChild(fullscreenRoot);
 
             // recv fullscreen function
             var fullscreenFunc = function () {
@@ -81,19 +89,27 @@ var WebGLWindow = {
                         var width = Math.floor(beforeWidth * ratio);
                         var height = Math.floor(beforeHeight * ratio);
 
-                        canvas.style.width = width + 'px';
-                        canvas.style.height = height + 'px';;
+                        fullscreenRoot.style.width = width + 'px';
+                        fullscreenRoot.style.height = height + 'px';
                     } else {
-                        canvas.style.width = window.screen.width + 'px';;
-                        canvas.style.height = window.screen.height + 'px';;
+                        fullscreenRoot.style.width = window.screen.width + 'px';
+                        fullscreenRoot.style.height = window.screen.height + 'px';
                     }
 
+                    // make canvas size 100% to fix screen size
+                    canvas.style.width = "100%";
+                    canvas.style.height = "100%";
+
                 } else {
-					canvas.style.width = beforeWidth + 'px';;
-                    canvas.style.height = beforeHeight + 'px';;
-                    beforeParent.insertBefore(canvas, Array.from(beforeParent.children)[index]);
+					fullscreenRoot.style.width = beforeWidth + 'px';
+                    fullscreenRoot.style.height = beforeHeight + 'px';
+                    beforeParent.insertBefore(fullscreenRoot, Array.from(beforeParent.children)[index]);
 
                     div.parentNode.removeChild(div);
+
+                    // set canvas size to origin size
+                    canvas.style.width = originSize.width;
+                    canvas.style.height = originSize.height;
 
                     // remove this function
                     removeEventFullScreen(fullscreenFunc);
@@ -112,8 +128,7 @@ var WebGLWindow = {
     MakeFullscreen : function (str) {
         document.makeFullscreen(Pointer_stringify(str));
 	},
-    ExitFullscreen : function()
-    {
+    ExitFullscreen : function() {
         // get fullscreen object
         var doc = window.document;
         var objFullScreen = doc.fullscreenElement || doc.mozFullScreenElement || doc.webkitFullscreenElement || doc.msFullscreenElement;
@@ -125,6 +140,14 @@ var WebGLWindow = {
             else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
             else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
         }
+    },
+    IsFullscreen : function() {
+        // get fullscreen object
+        var doc = window.document;
+        var objFullScreen = doc.fullscreenElement || doc.mozFullScreenElement || doc.webkitFullscreenElement || doc.msFullscreenElement;
+
+        // check full screen elemenet is not null!
+        return objFullScreen != null;
     },
 }
 
