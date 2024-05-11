@@ -24,3 +24,7 @@ no need to setting anything.
 Add "WEBGLINPUT_TAB" to Scripting Define Symbols.
 
 and check "Enable Tab Text" at WebGLInput. 
+
+# fullscreen support
+
+call WebGLSupport.WebGLWindow.SwitchFullscreen(); to switch fullscreen mode.
