@@ -8,6 +8,8 @@ support "tab" and "shift+tab" change focus to other InputField
 
 support mobile. (Experiment)
 
+support UI Toolkit. (Experiment)
+
 # DEMO
 https://unityroom.com/games/webglinput
 
