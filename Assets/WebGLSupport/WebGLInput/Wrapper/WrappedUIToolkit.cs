@@ -22,7 +22,11 @@ namespace WebGLSupport
         {
             get
             {
+#if UNITY_2023_1_OR_NEWER
                 return input.textEdition.placeholder;
+#else
+                return "";
+#endif
             }
         }
 
