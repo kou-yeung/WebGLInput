@@ -28,3 +28,18 @@ and check "Enable Tab Text" at WebGLInput.
 # fullscreen support
 
 call WebGLSupport.WebGLWindow.SwitchFullscreen(); to switch fullscreen mode.
+
+# Experimental : Support UI Toolkit
+sample code
+```
+[SerializeField] UIDocument uiDocument;
+public void Start()
+{
+    // find all TextField element
+    uiDocument.rootVisualElement.Query<TextField>().ForEach(v =>
+    {
+        // add WebGLInputManipulator to TextField
+        v.AddManipulator(new WebGLSupport.WebGLInputManipulator());
+    });
+}
+```
