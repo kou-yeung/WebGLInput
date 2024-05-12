@@ -99,11 +99,6 @@ namespace WebGLSupport
             checker = new RebuildChecker(this);
         }
 
-        public RectTransform RectTransform()
-        {
-            return input.GetComponent<RectTransform>();
-        }
-
         public void ActivateInputField()
         {
             input.ActivateInputField();
@@ -121,6 +116,11 @@ namespace WebGLSupport
                 input.textComponent.SetAllDirty();
                 input.Rebuild(CanvasUpdate.LatePreRender);
             }
+        }
+
+        public Rect GetScreenCoordinates()
+        {
+            return Support.GetScreenCoordinates(input.GetComponent<RectTransform>());
         }
     }
 }
