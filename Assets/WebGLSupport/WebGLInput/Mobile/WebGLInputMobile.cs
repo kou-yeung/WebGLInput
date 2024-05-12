@@ -23,7 +23,7 @@ namespace WebGLSupport
         /// <returns></returns>
         public static int WebGLInputMobileRegister(Action<int> OnTouchEnd) { return 0; }
 
-        public static void WebGLInputMobileOnFocusOut(int id, Action<int> OnFocusOut) {}
+        public static void WebGLInputMobileOnFocusOut(int id, Action<int> OnFocusOut) { }
 #endif
     }
 

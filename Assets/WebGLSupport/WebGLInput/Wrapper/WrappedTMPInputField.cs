@@ -132,14 +132,16 @@ namespace WebGLSupport
             checker = new RebuildChecker(this);
         }
 
-        public RectTransform RectTransform()
+        public Rect GetScreenCoordinates()
         {
             // 表示範囲
             // MEMO :
             //  TMP では textComponent を移動させてクリッピングするため、
             //  表示範囲外になる場合があるので、自分の範囲を返す
-            return input.GetComponent<RectTransform>();
+            return Support.GetScreenCoordinates(input.GetComponent<RectTransform>());
         }
+
+
 
         public void ActivateInputField()
         {
