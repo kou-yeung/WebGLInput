@@ -27,7 +27,11 @@ and check "Enable Tab Text" at WebGLInput.
 
 # fullscreen support
 
-call WebGLSupport.WebGLWindow.SwitchFullscreen(); to switch fullscreen mode.
+Call
+```
+WebGLSupport.WebGLWindow.SwitchFullscreen();
+```
+to switch fullscreen mode.
 
 # Experimental : Support UI Toolkit
 sample code
