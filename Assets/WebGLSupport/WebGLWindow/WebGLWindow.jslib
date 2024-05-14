@@ -72,6 +72,19 @@ var WebGLWindow = {
             };
 
             var fullscreenRoot = document.getElementById(id);
+
+            // when build with minimal default template
+            // the fullscreenRoot is <body>
+            var isBody = fullscreenRoot.tagName.toLowerCase() == "body";
+            if(isBody)
+            {
+                // swip the id to div
+                div.id = fullscreenRoot.id;
+                fullscreenRoot.id = "";
+                // overwrite the fullscreen root
+                fullscreenRoot = canvas;
+            }
+
             var beforeParent = fullscreenRoot.parentNode;
             var beforeStyle = window.getComputedStyle(fullscreenRoot);
             var beforeWidth = parseInt(beforeStyle.width);
@@ -104,6 +117,11 @@ var WebGLWindow = {
 					fullscreenRoot.style.width = beforeWidth + 'px';
                     fullscreenRoot.style.height = beforeHeight + 'px';
                     beforeParent.insertBefore(fullscreenRoot, Array.from(beforeParent.children)[index]);
+
+                    if(isBody)
+                    {
+                        beforeParent.id = div.id;
+                    }
 
                     div.parentNode.removeChild(div);
 
