@@ -11,7 +11,16 @@ support mobile. (Experiment)
 support UI Toolkit. (Experiment) (Support from Unity2022)
 
 # DEMO
-https://unityroom.com/games/webglinput
+
+Build with Unity's WebGL Template ( Unity2023.2.2f1 )
+
+[Default](https://kou-yeung.github.io/webgl_input_sample/default/index.html)
+
+ * default template fullscreen button is not work. ([more infomation](https://github.com/kou-yeung/WebGLInput/issues/138#issuecomment-2110300396) )
+
+[Minimal](https://kou-yeung.github.io/webgl_input_sample/minimal/index.html)
+
+[PWA](https://kou-yeung.github.io/webgl_input_sample/pwa/index.html)
 
 # How to use
 1.download [WebGLSupport.unitypackage](https://github.com/kou-yeung/WebGLInput/releases) and import to project
