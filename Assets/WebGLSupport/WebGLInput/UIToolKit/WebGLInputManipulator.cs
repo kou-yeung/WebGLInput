@@ -12,17 +12,25 @@ namespace WebGLSupport
         {
             this.showHtmlElement = showHtmlElement;
         }
-         protected override void RegisterCallbacksOnTarget()
+        protected override void RegisterCallbacksOnTarget()
         {
-            var textInput = target.Q("unity-text-input");
-            textInput.RegisterCallback<FocusInEvent>(OnFocusInEvent);
-            textInput.RegisterCallback<FocusOutEvent>(OnFocusOutEvent);
+            // uitoolkit is already support mobile.
+            if (!Application.isMobilePlatform)
+            {
+                var textInput = target.Q("unity-text-input");
+                textInput.RegisterCallback<FocusInEvent>(OnFocusInEvent);
+                textInput.RegisterCallback<FocusOutEvent>(OnFocusOutEvent);
+            }
         }
         protected override void UnregisterCallbacksFromTarget()
         {
-            var textInput = target.Q("unity-text-input");
-            textInput.UnregisterCallback<FocusInEvent>(OnFocusInEvent);
-            textInput.UnregisterCallback<FocusOutEvent>(OnFocusOutEvent);
+            // uitoolkit is already support mobile.
+            if (!Application.isMobilePlatform)
+            {
+                var textInput = target.Q("unity-text-input");
+                textInput.UnregisterCallback<FocusInEvent>(OnFocusInEvent);
+                textInput.UnregisterCallback<FocusOutEvent>(OnFocusOutEvent);
+            }
         }
 
         private void OnFocusInEvent(FocusInEvent evt)

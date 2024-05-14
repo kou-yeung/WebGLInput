@@ -116,7 +116,7 @@ namespace WebGLSupport
         }
         public int Id { get { return id; } }
         internal int id = -1;
-        public IInputField input;
+        public IInputField input { get; private set; }
         bool blurBlock = false;
 
         [TooltipAttribute("show input element on canvas. this will make you select text by drag.")]
