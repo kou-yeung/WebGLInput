@@ -13,8 +13,7 @@ public class Sample : MonoBehaviour
         uiDocument.rootVisualElement.Query<TextField>().ForEach(v =>
         {
             v.AddManipulator(new WebGLInputManipulator());
-        }); ;
-        
+        });
     }
 
     public void OnValueChange(InputField o)
