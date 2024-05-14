@@ -8,6 +8,8 @@ support "tab" and "shift+tab" change focus to other InputField
 
 support mobile. (Experiment)
 
+support UI Toolkit. (Experiment) (Support from Unity2022)
+
 # DEMO
 https://unityroom.com/games/webglinput
 
@@ -24,3 +26,26 @@ no need to setting anything.
 Add "WEBGLINPUT_TAB" to Scripting Define Symbols.
 
 and check "Enable Tab Text" at WebGLInput. 
+
+# fullscreen support
+
+Call
+```
+WebGLSupport.WebGLWindow.SwitchFullscreen();
+```
+to switch fullscreen mode.
+
+# Experimental : Support UI Toolkit
+sample code
+```
+[SerializeField] UIDocument uiDocument;
+public void Start()
+{
+    // find all TextField element
+    uiDocument.rootVisualElement.Query<TextField>().ForEach(v =>
+    {
+        // add WebGLInputManipulator to TextField
+        v.AddManipulator(new WebGLSupport.WebGLInputManipulator());
+    });
+}
+```

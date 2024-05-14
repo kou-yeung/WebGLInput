@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 
 namespace WebGLSupport
 {
@@ -38,7 +37,8 @@ namespace WebGLSupport
         bool OnFocusSelectAll { get; }
         bool EnableMobileSupport { get; }
 
-        RectTransform RectTransform();
+        Rect GetScreenCoordinates();
+
         void ActivateInputField();
         void DeactivateInputField();
         void Rebuild();

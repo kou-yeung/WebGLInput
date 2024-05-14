@@ -1,0 +1,4 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:TextField label="UIToolKit 1" placeholder-text="filler text" password="false" select-all-on-focus="false" select-all-on-mouse-up="false" style="width: 334px; -unity-text-align: upper-left; font-size: 16px; -unity-font-definition: url(&apos;project://database/Assets/Font/SoukouMincho.ttf?fileID=12800000&amp;guid=df7caf3edd728b64aaf970e4487d28cc&amp;type=3#SoukouMincho&apos;);" />
+    <ui:TextField label="UIToolKit 2" placeholder-text="filler text" hide-placeholder-on-focus="false" readonly="false" multiline="true" style="width: 334px; -unity-font-definition: url(&apos;project://database/Assets/Font/SoukouMincho.ttf?fileID=12800000&amp;guid=df7caf3edd728b64aaf970e4487d28cc&amp;type=3#SoukouMincho&apos;); font-size: 16px; height: 64px;" />
+</ui:UXML>

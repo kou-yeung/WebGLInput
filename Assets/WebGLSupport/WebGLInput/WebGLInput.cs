@@ -125,9 +125,12 @@ namespace WebGLSupport
         private IInputField Setup()
         {
             if (GetComponent<InputField>()) return new WrappedInputField(GetComponent<InputField>());
+
+            if (GetComponent<WebGLUIToolkitTextField>()) return new WrappedUIToolkit(GetComponent<WebGLUIToolkitTextField>());
 #if TMP_WEBGL_SUPPORT
             if (GetComponent<TMPro.TMP_InputField>()) return new WrappedTMPInputField(GetComponent<TMPro.TMP_InputField>());
 #endif // TMP_WEBGL_SUPPORT
+
             throw new Exception("Can not Setup WebGLInput!!");
         }
 
@@ -158,7 +161,7 @@ namespace WebGLSupport
         /// <returns></returns>
         RectInt GetElemetRect()
         {
-            var rect = GetScreenCoordinates(input.RectTransform());
+            var rect = input.GetScreenCoordinates();
             // モバイルの場合、強制表示する
             if (showHtmlElement || Application.isMobilePlatform)
             {
@@ -207,6 +210,10 @@ namespace WebGLSupport
             {
                 WebGLInputPlugin.WebGLInputSetSelectionRange(id, 0, input.text.Length);
             }
+            else
+            {
+                WebGLInputPlugin.WebGLInputSetSelectionRange(id, input.caretPosition, input.caretPosition);
+            }
 
             WebGLWindow.OnBlurEvent += OnWindowBlur;
         }
@@ -214,43 +221,6 @@ namespace WebGLSupport
         void OnWindowBlur()
         {
             blurBlock = true;
-        }
-
-        /// <summary>
-        /// 画面内の描画範囲を取得する
-        /// </summary>
-        /// <param name="uiElement"></param>
-        /// <returns></returns>
-        Rect GetScreenCoordinates(RectTransform uiElement)
-        {
-            var worldCorners = new Vector3[4];
-            uiElement.GetWorldCorners(worldCorners);
-
-            // try to support RenderMode:WorldSpace
-            var canvas = uiElement.GetComponentInParent<Canvas>();
-            var useCamera = (canvas.renderMode != RenderMode.ScreenSpaceOverlay);
-            if (canvas && useCamera)
-            {
-                var camera = canvas.worldCamera;
-                if (!camera) camera = Camera.main;
-
-                for (var i = 0; i < worldCorners.Length; i++)
-                {
-                    worldCorners[i] = camera.WorldToScreenPoint(worldCorners[i]);
-                }
-            }
-
-            var min = new Vector3(float.MaxValue, float.MaxValue);
-            var max = new Vector3(float.MinValue, float.MinValue);
-            for (var i = 0; i < worldCorners.Length; i++)
-            {
-                min.x = Mathf.Min(min.x, worldCorners[i].x);
-                min.y = Mathf.Min(min.y, worldCorners[i].y);
-                max.x = Mathf.Max(max.x, worldCorners[i].x);
-                max.y = Mathf.Max(max.y, worldCorners[i].y);
-            }
-
-            return new Rect(min.x, min.y, max.x - min.x, max.y - min.y);
         }
 
         internal void DeactivateInputField()
@@ -412,8 +382,8 @@ namespace WebGLSupport
         }
         public int CompareTo(WebGLInput other)
         {
-            var a = GetScreenCoordinates(input.RectTransform());
-            var b = GetScreenCoordinates(other.input.RectTransform());
+            var a = input.GetScreenCoordinates();
+            var b = other.input.GetScreenCoordinates();
             var res = b.y.CompareTo(a.y);
             if (res == 0) res = a.x.CompareTo(b.x);
             return res;
