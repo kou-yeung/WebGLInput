@@ -121,6 +121,8 @@ namespace WebGLSupport
 
         [TooltipAttribute("show input element on canvas. this will make you select text by drag.")]
         public bool showHtmlElement = false;
+        [TooltipAttribute("show input element above keyboard (mobile only)")]
+        public bool useGameLikeInput = true;
 
         private IInputField Setup()
         {
@@ -191,7 +193,7 @@ namespace WebGLSupport
 
             // モバイルの場合、強制表示する
             var isHidden = !(showHtmlElement || Application.isMobilePlatform);
-            id = WebGLInputPlugin.WebGLInputCreate(WebGLInput.CanvasId, rect.x, rect.y, rect.width, rect.height, fontSize, input.text, input.placeholder, input.lineType != LineType.SingleLine, isPassword, isHidden, Application.isMobilePlatform);
+            id = WebGLInputPlugin.WebGLInputCreate(WebGLInput.CanvasId, rect.x, rect.y, rect.width, rect.height, fontSize, input.text, input.placeholder, input.lineType != LineType.SingleLine, isPassword, isHidden, Application.isMobilePlatform && useGameLikeInput);
 
             instances[id] = this;
             WebGLInputPlugin.WebGLInputEnterSubmit(id, input.lineType != LineType.MultiLineNewline);
