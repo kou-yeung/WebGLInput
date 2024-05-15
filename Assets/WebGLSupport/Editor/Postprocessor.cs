@@ -19,12 +19,14 @@ namespace WebGLSupport
         static readonly string fullscreenNode = "";
 #endif
 
+        private static bool IsEnable => PlayerPrefs.GetInt(MenuPath, 1) == 1;
+
         [PostProcessBuild(1)]
         public static void OnPostprocessBuild(BuildTarget target, string pathToBuiltProject)
         {
             if (target != BuildTarget.WebGL) return;
             if (!supportedPostprocessor) return;
-            if (!Menu.GetChecked(MenuPath)) return;
+            if (!IsEnable) return;
 
             var path = Path.Combine(pathToBuiltProject, "index.html");
             if (!File.Exists(path)) return;
@@ -50,7 +52,7 @@ namespace WebGLSupport
         [MenuItem(MenuPath, validate = true)]
         private static bool OverwriteDefaultFullscreenButtonValidator()
         {
-            Menu.SetChecked(MenuPath, PlayerPrefs.GetInt(MenuPath, 1) == 1);
+            Menu.SetChecked(MenuPath, IsEnable);
             return true;
         }
     }
