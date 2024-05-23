@@ -45,7 +45,12 @@ namespace WebGLSupport
                     return ContentType.Password;
                 }
 
-                return input.keyboardType switch
+#if UNITY_2022_1_OR_NEWER
+                var keyboardType = input.keyboardType;
+#else
+                var keyboardType = TouchScreenKeyboardType.Default;
+#endif
+                return keyboardType switch
                 {
                     TouchScreenKeyboardType.Default => ContentType.Standard,
                     TouchScreenKeyboardType.ASCIICapable => ContentType.Alphanumeric,
@@ -94,33 +99,38 @@ namespace WebGLSupport
         public int selectionFocusPosition
         {
             get { return input.cursorIndex; }
+#if UNITY_2022_1_OR_NEWER
             set { input.cursorIndex = value; }
+#else
+            set { input.SelectRange(value, input.selectIndex); }
+#endif
         }
 
         public int selectionAnchorPosition
         {
             get { return input.selectIndex; }
+#if UNITY_2022_1_OR_NEWER
             set { input.selectIndex = value; }
+#else
+            set { input.SelectRange(input.cursorIndex, value); }
+#endif
         }
 
         public bool OnFocusSelectAll
         {
+#if UNITY_2022_1_OR_NEWER
             get { return input.selectAllOnFocus || input.selectAllOnMouseUp; }
+#else
+            get { return true; }
+#endif
         }
 
         public bool EnableMobileSupport
         {
             get
             {
-                // 2022.1.0f1
-                // https://unity.com/ja/releases/editor/whats-new/2022.1.0#release-notes
-                // WebGL: Added mobile keyboard support for WebGL to enter text in UI input fields.
-#if UNITY_2022_1_OR_NEWER
                 // return false to use unity mobile keyboard support
                 return false;
-#else
-                return true;
-#endif
             }
         }
 
