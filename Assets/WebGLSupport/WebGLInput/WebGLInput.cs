@@ -43,6 +43,9 @@ namespace WebGLSupport
         public static extern void WebGLInputOnEditEnd(int id, Action<int, string> cb);
 
         [DllImport("__Internal")]
+        public static extern void WebGLInputOnKeyboardEvent(int id, Action<int, int, string, int, int, int, int> cb);
+
+        [DllImport("__Internal")]
         public static extern int WebGLInputSelectionStart(int id);
 
         [DllImport("__Internal")]
@@ -74,7 +77,7 @@ namespace WebGLSupport
         public static extern void WebGLInputEnableTabText(int id, bool enable);
 #endif
 #else
-        public static void WebGLInputInit() {}
+        public static void WebGLInputInit() { }
         public static int WebGLInputCreate(string canvasId, int x, int y, int width, int height, int fontsize, string text, string placeholder, bool isMultiLine, bool isPassword, bool isHidden, bool isMobile) { return 0; }
         public static void WebGLInputEnterSubmit(int id, bool flag) { }
         public static void WebGLInputTab(int id, Action<int, int> cb) { }
@@ -83,6 +86,7 @@ namespace WebGLSupport
         public static void WebGLInputOnBlur(int id, Action<int> cb) { }
         public static void WebGLInputOnValueChange(int id, Action<int, string> cb) { }
         public static void WebGLInputOnEditEnd(int id, Action<int, string> cb) { }
+        public static void WebGLInputOnKeyboardEvent(int id, Action<int, int, string, int, int, int, int> cb) { }
         public static int WebGLInputSelectionStart(int id) { return 0; }
         public static int WebGLInputSelectionEnd(int id) { return 0; }
         public static int WebGLInputSelectionDirection(int id) { return 0; }
@@ -102,6 +106,9 @@ namespace WebGLSupport
 
     public class WebGLInput : MonoBehaviour, IComparable<WebGLInput>
     {
+        public static event KeyboardEventHandler OnKeyboardDown;
+        public static event KeyboardEventHandler OnKeyboardUp;
+
         static Dictionary<int, WebGLInput> instances = new Dictionary<int, WebGLInput>();
         public static string CanvasId { get; set; }
 
@@ -147,7 +154,8 @@ namespace WebGLSupport
                 if (input.EnableMobileSupport)
                 {
                     gameObject.AddComponent<WebGLInputMobile>();
-                } else
+                }
+                else
                 {
                     // when disable mobile input. disable self!
                     enabled = false;
@@ -199,7 +207,9 @@ namespace WebGLSupport
             WebGLInputPlugin.WebGLInputOnBlur(id, OnBlur);
             WebGLInputPlugin.WebGLInputOnValueChange(id, OnValueChange);
             WebGLInputPlugin.WebGLInputOnEditEnd(id, OnEditEnd);
+            WebGLInputPlugin.WebGLInputOnKeyboardEvent(id, OnKeyboardEvent);
             WebGLInputPlugin.WebGLInputTab(id, OnTab);
+
             // default value : https://www.w3schools.com/tags/att_input_maxlength.asp
             WebGLInputPlugin.WebGLInputMaxLength(id, (input.characterLimit > 0) ? input.characterLimit : 524288);
             WebGLInputPlugin.WebGLInputFocus(id);
@@ -311,6 +321,26 @@ namespace WebGLSupport
             WebGLInputTabFocus.OnTab(instances[id], value);
         }
 
+        [MonoPInvokeCallback(typeof(Action<int, int, string, int, int, int, int>))]
+        static void OnKeyboardEvent(int id, int mode, string key, int code, int shiftKey, int ctrlKey, int altKey)
+        {
+            if (!instances.ContainsKey(id)) return;
+            var instance = instances[id];
+
+            // mode : keydown(1) keyup(3)
+            var cb = mode switch
+            {
+                1 => OnKeyboardDown,
+                2 => OnKeyboardUp,
+                _ => default
+            };
+
+            if (cb != null)
+            {
+                cb(instance, new KeyboardEvent(key, code, shiftKey != 0, ctrlKey != 0, altKey != 0));
+            }
+        }
+
         void Update()
         {
             if (input == null || !input.isFocused)
@@ -325,7 +355,8 @@ namespace WebGLSupport
                 if (Application.isMobilePlatform)
                 {
                     return;
-                } else
+                }
+                else
                 {
                     OnSelect();
                 }
