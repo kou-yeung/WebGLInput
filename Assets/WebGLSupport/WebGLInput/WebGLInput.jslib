@@ -156,6 +156,21 @@ var WebGLInput = {
             (!!Runtime.dynCall) ? Runtime.dynCall("vii", cb, [id, buffer]) : {{{ makeDynCall("vii", "cb") }}}(id, buffer);
         };
     },
+    WebGLInputOnKeyboardEvent:function(id, cb){
+        var input = instances[id];
+        var func = function(mode, e) {
+            var bufferSize = lengthBytesUTF8(e.key) + 1;
+            var key = _malloc(bufferSize);
+            stringToUTF8(e.key, key, bufferSize);
+            var code = e.code;
+            var shift = e.shiftKey ? 1 : 0;
+            var ctrl = e.ctrlKey ? 1 : 0;
+            var alt = e.altKey ? 1 : 0;
+            (!!Runtime.dynCall) ? Runtime.dynCall("viiiiiii", cb, [id, mode, key, code, shift, ctrl, alt]) : {{{ makeDynCall("viiiiiii", "cb") }}}(id, mode, key, code, shift, ctrl, alt);
+        }
+        input.addEventListener('keydown', function(e) { func(1, e); });
+        input.addEventListener('keyup', function(e) { func(2, e); });
+    },
     WebGLInputSelectionStart:function(id){
         var input = instances[id];
         return input.selectionStart;
