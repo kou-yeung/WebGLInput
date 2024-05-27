@@ -1,11 +1,11 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 namespace WebGLSupport.Detail
 {
     public static class Support
     {
         /// <summary>
-        /// ‰æ–Ê“à‚Ì•`‰æ”ÍˆÍ‚ğæ“¾‚·‚é
+        /// ç”»é¢å†…ã®æç”»ç¯„å›²ã‚’å–å¾—ã™ã‚‹
         /// </summary>
         /// <param name="uiElement"></param>
         /// <returns></returns>
