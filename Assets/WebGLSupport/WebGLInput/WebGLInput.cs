@@ -228,7 +228,25 @@ namespace WebGLSupport
             WebGLWindow.OnBlurEvent += OnWindowBlur;
         }
 
-        void OnWindowBlur()
+        /// <summary>
+        /// sync text from inputfield
+        /// </summary>
+        /// <param name="cursorIndex"></param>
+        public void SyncText(int? cursorIndex = null)
+        {
+            if (!instances.ContainsKey(id)) return;
+
+            var instance = instances[id];
+
+            WebGLInputPlugin.WebGLInputText(id, instance.input.text);
+
+            if (cursorIndex.HasValue)
+            {
+                WebGLInputPlugin.WebGLInputSetSelectionRange(id, cursorIndex.Value, cursorIndex.Value);
+            }
+        }
+
+        private void OnWindowBlur()
         {
             blurBlock = true;
         }
@@ -420,7 +438,7 @@ namespace WebGLSupport
             return res;
         }
 
-        public void CheckOutFocus()
+        private void CheckOutFocus()
         {
             if (!Application.isMobilePlatform) return;
             if (!instances.ContainsKey(id)) return;
