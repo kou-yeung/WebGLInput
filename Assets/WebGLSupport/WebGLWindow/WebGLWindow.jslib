@@ -1,4 +1,8 @@
 var WebGLWindow = {
+    focusListener: null,
+    blurListener: null,
+    resizeListener: null,
+    
     WebGLWindowInit : function() {
         // use WebAssembly.Table : makeDynCall
         // when enable. dynCall is undefined
@@ -14,6 +18,21 @@ var WebGLWindow = {
             if(typeof Runtime === "undefined") Runtime = { dynCall : dynCall }
         }
     },
+    WebGLWindowUninit : function() {
+        if(focusListener) {
+            window.removeEventListener('focus', this.focusListener);
+            this.focusListener = null;
+        }
+        if(blurListener) {
+            window.removeEventListener('blur', this.blurListener);
+            this.blurListener = null;
+        }
+        if(resizeListener) {
+            window.removeEventListener('resize', this.resizeListener);
+            this.resizeListener = null;
+        }
+    },
+
     WebGLWindowGetCanvasName: function() {
         var elements = document.getElementsByTagName('canvas');
         var returnStr = "";
@@ -32,19 +51,22 @@ var WebGLWindow = {
         return buffer;
     },
     WebGLWindowOnFocus: function (cb) {
-        window.addEventListener('focus', function () {
-            (!!Runtime.dynCall) ? Runtime.dynCall("v", cb, []) : {{{ makeDynCall("v", "cb") }}}();
-        });
+        this.focusListener = function () { 
+            (!!Runtime.dynCall) ? Runtime.dynCall("v", cb, []) : {{{ makeDynCall("v", "cb") }}}(); 
+        };
+        window.addEventListener('focus', this.focusListener);
     },
     WebGLWindowOnBlur: function (cb) {
-        window.addEventListener('blur', function () {
-            (!!Runtime.dynCall) ? Runtime.dynCall("v", cb, []) : {{{ makeDynCall("v", "cb") }}}();
-        });
+        this.blurListener = function () { 
+            (!!Runtime.dynCall) ? Runtime.dynCall("v", cb, []) : {{{ makeDynCall("v", "cb") }}}(); 
+        };
+        window.addEventListener('blur', this.blurListener);
     },
     WebGLWindowOnResize: function(cb) {
-        window.addEventListener('resize', function () {
-            (!!Runtime.dynCall) ? Runtime.dynCall("v", cb, []) : {{{ makeDynCall("v", "cb") }}}();
-        });
+        this.resizeListener = function () { 
+            (!!Runtime.dynCall) ? Runtime.dynCall("v", cb, []) : {{{ makeDynCall("v", "cb") }}}(); 
+        };
+        window.addEventListener('resize', this.resizeListener);
     },
     WebGLWindowInjectFullscreen : function () {
         document.makeFullscreen = function (id, keepAspectRatio) {
