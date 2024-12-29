@@ -11,6 +11,9 @@ namespace WebGLSupport
         [DllImport("__Internal")]
         public static extern void WebGLWindowInit();
         [DllImport("__Internal")]
+        public static extern void WebGLWindowUninit();
+
+        [DllImport("__Internal")]
         public static extern void WebGLWindowOnFocus(Action cb);
 
         [DllImport("__Internal")]
@@ -35,6 +38,7 @@ namespace WebGLSupport
         public static extern bool IsFullscreen();
 #else
         public static void WebGLWindowInit() { }
+        public static void WebGLWindowUninit() { }
         public static void WebGLWindowOnFocus(Action cb) { }
         public static void WebGLWindowOnBlur(Action cb) { }
         public static void WebGLWindowOnResize(Action cb) { }
@@ -66,6 +70,13 @@ namespace WebGLSupport
             WebGLWindowPlugin.WebGLWindowOnBlur(OnWindowBlur);
             WebGLWindowPlugin.WebGLWindowOnResize(OnWindowResize);
             WebGLWindowPlugin.WebGLWindowInjectFullscreen();
+
+            Application.quitting += Uninit;
+        }
+        static void Uninit()
+        {
+            WebGLWindowPlugin.WebGLWindowUninit();
+            Application.quitting -= Uninit;
         }
 
         [MonoPInvokeCallback(typeof(Action))]
