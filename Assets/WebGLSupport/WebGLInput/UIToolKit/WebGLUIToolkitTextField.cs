@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.UIElements;
-using UnityEngine.Windows;
 
 namespace WebGLSupport
 {
