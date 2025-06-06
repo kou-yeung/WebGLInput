@@ -23,6 +23,8 @@ Build with Unity's WebGL Template ( Unity2023.2.2f1 )
 # How to use
 1.download [WebGLSupport.unitypackage](https://github.com/kou-yeung/WebGLInput/releases) and import to project
 
+  or add https://github.com/kou-yeung/WebGLInput.git?path=Assets/WebGLSupport from Package Manager
+  
 2.add "WebGLInput" Component to InputField GameObject
 
 3.build and run!!
