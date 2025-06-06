@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System.IO;
 using UnityEditor;
 using UnityEditor.Callbacks;
@@ -57,3 +58,4 @@ namespace WebGLSupport
         }
     }
 }
+#endif
