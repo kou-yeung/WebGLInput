@@ -1,3 +1,8 @@
+/* 
+ * Copyright (c) 2025 Hancom, Inc.
+ * SPDX-License-Identifier: MIT
+ */
+
 var WebGLInput = {
     $instances: [],
     WebGLInputInit : function() {
@@ -74,6 +79,10 @@ var WebGLInput = {
         
         if(isPassword){
             input.type = 'password';
+        }
+
+        if(isHidden){
+            input.style.pointerEvents = 'none';
         }
 
         if(isMobile) {

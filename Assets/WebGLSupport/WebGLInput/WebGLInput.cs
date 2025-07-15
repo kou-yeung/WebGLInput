@@ -1,4 +1,9 @@
-﻿#if UNITY_2018_2_OR_NEWER
+﻿/* 
+ * Copyright (c) 2025 Hancom, Inc.
+ * SPDX-License-Identifier: MIT
+ */
+
+#if UNITY_2018_2_OR_NEWER
 #define TMP_WEBGL_SUPPORT
 #endif
 
@@ -161,6 +166,7 @@ namespace WebGLSupport
                     enabled = false;
                 }
             }
+            OnKeyboardDown += KeyboardDownHandler;
         }
 
         /// <summary>
@@ -289,7 +295,7 @@ namespace WebGLSupport
             var block = instances[id].blurBlock;    // get blur block state
             instances[id].blurBlock = false;        // reset instalce block state
             if (block) yield break;                 // if block. break it!!
-            instances[id].DeactivateInputField();
+            // instances[id].DeactivateInputField();
         }
 
         [MonoPInvokeCallback(typeof(Action<int, string>))]
@@ -312,17 +318,30 @@ namespace WebGLSupport
                 }
             }
 
+            var start = WebGLInputPlugin.WebGLInputSelectionStart(id);
+            var end = WebGLInputPlugin.WebGLInputSelectionEnd(id);
+
             // InputField の ContentType による整形したテキストを HTML の input に再設定します
             if (value != instance.input.text)
             {
-                var start = WebGLInputPlugin.WebGLInputSelectionStart(id);
-                var end = WebGLInputPlugin.WebGLInputSelectionEnd(id);
                 // take the offset.when char remove from input.
                 var offset = instance.input.text.Length - value.Length;
 
                 WebGLInputPlugin.WebGLInputText(id, instance.input.text);
                 // reset the input element selection range!!
                 WebGLInputPlugin.WebGLInputSetSelectionRange(id, start + offset, end + offset);
+            }
+
+            // 選択方向によって設定します
+            if (WebGLInputPlugin.WebGLInputSelectionDirection(id) == -1)
+            {
+                instance.input.selectionFocusPosition = start;
+                instance.input.selectionAnchorPosition = end;
+            }
+            else
+            {
+                instance.input.selectionFocusPosition = end;
+                instance.input.selectionAnchorPosition = start;
             }
         }
         [MonoPInvokeCallback(typeof(Action<int, string>))]
@@ -353,9 +372,74 @@ namespace WebGLSupport
                 _ => default
             };
 
-            if (cb != null)
+            if (mode == 1 && key != null)
             {
-                cb(instance, new KeyboardEvent(key, code, shiftKey != 0, ctrlKey != 0, altKey != 0));
+                cb?.Invoke(instance, new KeyboardEvent(id, key, code, shiftKey != 0, ctrlKey != 0, altKey != 0));
+            }
+        }
+
+        private void KeyboardDownHandler(WebGLInput instance, KeyboardEvent keyboardEvent)
+        {
+            if (instance == null || id != keyboardEvent.Id)
+            {
+                return;
+            }
+
+            string eventKey = string.Empty;
+            eventKey += keyboardEvent.ShiftKey ? "#" : "";
+            eventKey += keyboardEvent.CtrlKey ? "^" : "";
+            eventKey += keyboardEvent.AltKey ? "&" : "";
+
+            switch (keyboardEvent.Key)
+            {
+                case "ArrowLeft":
+                    eventKey += "left";
+                    break;
+                case "ArrowUp":
+                    eventKey += "up";
+                    break;
+                case "ArrowRight":
+                    eventKey += "right";
+                    break;
+                case "ArrowDown":
+                    eventKey += "down";
+                    break;
+                case "Home":
+                    eventKey += "home";
+                    break;
+                case "End":
+                    eventKey += "end";
+                    break;
+                case "Shift":
+                    eventKey += KeyCode.LeftShift.ToString();
+                    break;
+                case "Control":
+                    eventKey += KeyCode.LeftControl.ToString();
+                    break;
+                default:
+                    break;
+            }
+
+            if (eventKey != string.Empty)
+            {
+                if (keyboardEvent.Key == "a" || keyboardEvent.Key == "A")
+                {
+                    eventKey += KeyCode.A.ToString();
+                }
+            }
+
+            instance.input.CreateKeyEvent(Event.KeyboardEvent(eventKey));
+
+            int startPos = instance.input.selectionAnchorPosition;
+            int endPos = instance.input.selectionFocusPosition;
+
+            if (startPos <= endPos)
+            {
+                WebGLInputPlugin.WebGLInputSetSelectionRange(keyboardEvent.Id, startPos, endPos);
+            }
+            else
+            {
+                WebGLInputPlugin.WebGLInputSetSelectionRange(keyboardEvent.Id, endPos, startPos);
             }
         }
 
@@ -390,21 +474,19 @@ namespace WebGLSupport
                 {
                     // focus this id
                     WebGLInputPlugin.WebGLInputFocus(id);
-                }
-            }
 
-            var start = WebGLInputPlugin.WebGLInputSelectionStart(id);
-            var end = WebGLInputPlugin.WebGLInputSelectionEnd(id);
-            // 選択方向によって設定します
-            if (WebGLInputPlugin.WebGLInputSelectionDirection(id) == -1)
-            {
-                input.selectionFocusPosition = start;
-                input.selectionAnchorPosition = end;
-            }
-            else
-            {
-                input.selectionFocusPosition = end;
-                input.selectionAnchorPosition = start;
+                    int startPos = input.selectionAnchorPosition;
+                    int endPos = input.selectionFocusPosition;
+
+                    if (startPos <= endPos)
+                    {
+                        WebGLInputPlugin.WebGLInputSetSelectionRange(id, startPos, endPos);
+                    }
+                    else
+                    {
+                        WebGLInputPlugin.WebGLInputSetSelectionRange(id, endPos, startPos);
+                    }
+                }
             }
 
             input.Rebuild();
@@ -419,6 +501,7 @@ namespace WebGLSupport
             Input.ResetInputAxes(); // Inputの状態リセット
 #endif
             DeactivateInputField();
+            OnKeyboardDown -= KeyboardDownHandler;
         }
 
         private void OnEnable()

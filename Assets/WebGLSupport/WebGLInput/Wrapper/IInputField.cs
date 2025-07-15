@@ -1,4 +1,9 @@
-﻿using UnityEngine;
+﻿/* 
+ * Copyright (c) 2025 Hancom, Inc.
+ * SPDX-License-Identifier: MIT
+ */
+
+using UnityEngine;
 
 namespace WebGLSupport
 {
@@ -41,6 +46,7 @@ namespace WebGLSupport
 
         void ActivateInputField();
         void DeactivateInputField();
+        void CreateKeyEvent(Event e);
         void Rebuild();
     }
 }

@@ -1,4 +1,9 @@
-﻿#if UNITY_2018_2_OR_NEWER
+﻿/* 
+ * Copyright (c) 2025 Hancom, Inc.
+ * SPDX-License-Identifier: MIT
+ */
+
+#if UNITY_2018_2_OR_NEWER
 #define TMP_WEBGL_SUPPORT
 #endif
 
@@ -151,6 +156,11 @@ namespace WebGLSupport
         public void DeactivateInputField()
         {
             input.DeactivateInputField();
+        }
+
+        public void CreateKeyEvent(Event e)
+        {
+            input.ProcessEvent(e);
         }
 
         public void Rebuild()

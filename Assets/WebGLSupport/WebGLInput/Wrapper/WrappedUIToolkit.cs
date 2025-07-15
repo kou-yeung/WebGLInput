@@ -1,4 +1,9 @@
-﻿using UnityEngine;
+﻿/* 
+ * Copyright (c) 2025 Hancom, Inc.
+ * SPDX-License-Identifier: MIT
+ */
+
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace WebGLSupport
@@ -153,6 +158,10 @@ namespace WebGLSupport
         public void DeactivateInputField()
         {
             input.Blur();
+        }
+
+        public void CreateKeyEvent(Event e)
+        {
         }
 
         public void Rebuild()
