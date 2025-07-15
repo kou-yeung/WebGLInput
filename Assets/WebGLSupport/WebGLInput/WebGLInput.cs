@@ -27,6 +27,9 @@ namespace WebGLSupport
         public static extern int WebGLInputCreate(string canvasId, int x, int y, int width, int height, int fontsize, string text, string placeholder, bool isMultiLine, bool isPassword, bool isHidden, bool isMobile);
 
         [DllImport("__Internal")]
+        public static extern void WebGLInputEscape(int id);
+
+        [DllImport("__Internal")]
         public static extern void WebGLInputEnterSubmit(int id, bool flag);
 
         [DllImport("__Internal")]
@@ -84,6 +87,7 @@ namespace WebGLSupport
 #else
         public static void WebGLInputInit() { }
         public static int WebGLInputCreate(string canvasId, int x, int y, int width, int height, int fontsize, string text, string placeholder, bool isMultiLine, bool isPassword, bool isHidden, bool isMobile) { return 0; }
+        public static void WebGLInputEscape(int id) { }
         public static void WebGLInputEnterSubmit(int id, bool flag) { }
         public static void WebGLInputTab(int id, Action<int, int> cb) { }
         public static void WebGLInputFocus(int id) { }
@@ -208,6 +212,7 @@ namespace WebGLSupport
             id = WebGLInputPlugin.WebGLInputCreate(WebGLInput.CanvasId, rect.x, rect.y, rect.width, rect.height, fontSize, input.text, input.placeholder, input.lineType != LineType.SingleLine, isPassword, isHidden, Application.isMobilePlatform);
 
             instances[id] = this;
+            WebGLInputPlugin.WebGLInputEscape(id);
             WebGLInputPlugin.WebGLInputEnterSubmit(id, input.lineType != LineType.MultiLineNewline);
             WebGLInputPlugin.WebGLInputOnFocus(id, OnFocus);
             WebGLInputPlugin.WebGLInputOnBlur(id, OnBlur);
