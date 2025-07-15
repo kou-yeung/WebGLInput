@@ -92,15 +92,6 @@ var WebGLInput = {
         }
         return instances.push(input) - 1;
     },
-    WebGLInputEscape: function (id) {
-        var input = instances[id];
-        input.addEventListener('keydown', function (e) {
-            if ((e.which && e.which === 27) || (e.keyCode && e.keyCode === 27)) {
-                e.preventDefault();
-                input.blur();
-            }
-        });
-    },
     WebGLInputEnterSubmit: function(id, falg){
         var input = instances[id];
         // for enter key
