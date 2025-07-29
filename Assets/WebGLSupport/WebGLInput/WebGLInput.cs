@@ -149,7 +149,7 @@ namespace WebGLSupport
             enabled = false;
 #endif
             // for mobile platform
-            if (Application.isMobilePlatform)
+            if (IsMobilePlatform())
             {
                 if (input.EnableMobileSupport)
                 {
@@ -171,7 +171,7 @@ namespace WebGLSupport
         {
             var rect = input.GetScreenCoordinates();
             // モバイルの場合、強制表示する
-            if (showHtmlElement || Application.isMobilePlatform)
+            if (showHtmlElement || IsMobilePlatform())
             {
                 var x = (int)(rect.x);
                 var y = (int)(Screen.height - (rect.y + rect.height));
@@ -198,8 +198,8 @@ namespace WebGLSupport
             var fontSize = Mathf.Max(14, input.fontSize); // limit font size : 14 !!
 
             // モバイルの場合、強制表示する
-            var isHidden = !(showHtmlElement || Application.isMobilePlatform);
-            id = WebGLInputPlugin.WebGLInputCreate(WebGLInput.CanvasId, rect.x, rect.y, rect.width, rect.height, fontSize, input.text, input.placeholder, input.lineType != LineType.SingleLine, isPassword, isHidden, Application.isMobilePlatform);
+            var isHidden = !(showHtmlElement || IsMobilePlatform());
+            id = WebGLInputPlugin.WebGLInputCreate(WebGLInput.CanvasId, rect.x, rect.y, rect.width, rect.height, fontSize, input.text, input.placeholder, input.lineType != LineType.SingleLine, isPassword, isHidden, IsMobilePlatform());
 
             instances[id] = this;
             WebGLInputPlugin.WebGLInputEnterSubmit(id, input.lineType != LineType.MultiLineNewline);
@@ -370,7 +370,7 @@ namespace WebGLSupport
             // 未登録の場合、選択する
             if (!instances.ContainsKey(id))
             {
-                if (Application.isMobilePlatform)
+                if (IsMobilePlatform())
                 {
                     return;
                 }
@@ -381,7 +381,7 @@ namespace WebGLSupport
             }
             else if (!WebGLInputPlugin.WebGLInputIsFocus(id))
             {
-                if (Application.isMobilePlatform)
+                if (IsMobilePlatform())
                 {
                     //input.DeactivateInputField();
                     return;
@@ -440,7 +440,7 @@ namespace WebGLSupport
 
         private void CheckOutFocus()
         {
-            if (!Application.isMobilePlatform) return;
+            if (!IsMobilePlatform()) return;
             if (!instances.ContainsKey(id)) return;
             var current = EventSystem.current.currentSelectedGameObject;
             if (current != null) return;
@@ -475,6 +475,28 @@ namespace WebGLSupport
                 else if (index >= inputs.Count) index = 0;
                 inputs[index].input.ActivateInputField();
             }
+        }
+
+        /// <summary>
+        /// iPad を含めた mobile 判定
+        /// </summary>
+        public static bool IsMobilePlatform()
+        {
+            if (Application.isMobilePlatform)
+            {
+                return true;
+            }
+            // iPad 判定を追加
+            if (SystemInfo.deviceModel != null && SystemInfo.deviceModel.Contains("iPad"))
+            {
+                return true;
+            }
+            // deviceType でも判定可能
+            if (SystemInfo.deviceType == DeviceType.Handheld && SystemInfo.deviceModel != null && SystemInfo.deviceModel.Contains("iPad"))
+            {
+                return true;
+            }
+            return false;
         }
     }
 }
