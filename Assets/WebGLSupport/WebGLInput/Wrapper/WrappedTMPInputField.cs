@@ -1,9 +1,4 @@
-﻿/* 
- * Copyright (c) 2025 Hancom, Inc.
- * SPDX-License-Identifier: MIT
- */
-
-#if UNITY_2018_2_OR_NEWER
+﻿#if UNITY_2018_2_OR_NEWER
 #define TMP_WEBGL_SUPPORT
 #endif
 

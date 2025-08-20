@@ -1,9 +1,4 @@
-﻿/* 
- * Copyright (c) 2025 Hancom, Inc.
- * SPDX-License-Identifier: MIT
- */
-
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace WebGLSupport

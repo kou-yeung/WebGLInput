@@ -1,8 +1,3 @@
-/* 
- * Copyright (c) 2025 Hancom, Inc.
- * SPDX-License-Identifier: MIT
- */
-
 namespace WebGLSupport
 {
     public delegate void KeyboardEventHandler(WebGLInput input, KeyboardEvent keyboardEvent);

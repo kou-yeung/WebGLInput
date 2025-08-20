@@ -1,8 +1,3 @@
-/* 
- * Copyright (c) 2025 Hancom, Inc.
- * SPDX-License-Identifier: MIT
- */
-
 var WebGLInput = {
     $instances: [],
     WebGLInputInit : function() {
