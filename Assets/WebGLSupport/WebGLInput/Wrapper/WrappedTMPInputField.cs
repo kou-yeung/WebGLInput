@@ -153,6 +153,11 @@ namespace WebGLSupport
             input.DeactivateInputField();
         }
 
+        public void CreateKeyEvent(Event e)
+        {
+            input.ProcessEvent(e);
+        }
+
         public void Rebuild()
         {
 #if UNITY_2020_1_OR_NEWER

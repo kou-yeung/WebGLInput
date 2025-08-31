@@ -41,6 +41,7 @@ namespace WebGLSupport
 
         void ActivateInputField();
         void DeactivateInputField();
+        void CreateKeyEvent(Event e);
         void Rebuild();
     }
 }

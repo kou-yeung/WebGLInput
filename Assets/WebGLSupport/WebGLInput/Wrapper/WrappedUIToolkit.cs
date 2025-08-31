@@ -155,6 +155,10 @@ namespace WebGLSupport
             input.Blur();
         }
 
+        public void CreateKeyEvent(Event e)
+        {
+        }
+
         public void Rebuild()
         {
         }

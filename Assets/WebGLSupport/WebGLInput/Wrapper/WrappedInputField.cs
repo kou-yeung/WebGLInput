@@ -102,6 +102,11 @@ namespace WebGLSupport
             input.DeactivateInputField();
         }
 
+        public void CreateKeyEvent(Event e)
+        {
+            input.ProcessEvent(e);
+        }
+
         public void Rebuild()
         {
             if (checker.NeedRebuild())

@@ -76,6 +76,10 @@ var WebGLInput = {
             input.type = 'password';
         }
 
+        if(isHidden){
+            input.style.pointerEvents = 'none';
+        }
+
         if(isMobile) {
             document.body.appendChild(input);
         } else {
