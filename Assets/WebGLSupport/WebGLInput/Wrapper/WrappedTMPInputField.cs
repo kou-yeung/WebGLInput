@@ -44,7 +44,19 @@ namespace WebGLSupport
             i.lineType = (InputField.LineType)Enum.Parse(typeof(InputField.LineType), input.lineType.ToString());
             i.inputType = (InputField.InputType)Enum.Parse(typeof(InputField.InputType), input.inputType.ToString());
             i.keyboardType = input.keyboardType;
-            i.characterValidation = (InputField.CharacterValidation)Enum.Parse(typeof(InputField.CharacterValidation), input.characterValidation.ToString());
+            
+            // Fix: Only map known values, fallback for Regex
+            var charValidationStr = input.characterValidation.ToString();
+            if (Enum.IsDefined(typeof(InputField.CharacterValidation), charValidationStr))
+            {
+                i.characterValidation = (InputField.CharacterValidation)Enum.Parse(typeof(InputField.CharacterValidation), charValidationStr);
+            }
+            else
+            {
+                // Fallback to None or another appropriate value
+                i.characterValidation = InputField.CharacterValidation.None;
+            }
+            
             i.characterLimit = input.characterLimit;
             i.text = inText;
             var res = i.text;
