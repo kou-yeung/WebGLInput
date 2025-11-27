@@ -373,6 +373,66 @@ namespace WebGLSupport
             }
         }
 
+        private bool TryGetKeyboardEventKeyString(KeyboardEvent keyboardEvent, out string eventKeyString)
+        {
+            eventKeyString = default;
+
+            string eventModifiers = string.Empty;
+            eventModifiers += keyboardEvent.ShiftKey ? "#" : "";
+            eventModifiers += keyboardEvent.CtrlKey ? "^" : "";
+            eventModifiers += keyboardEvent.AltKey ? "&" : "";
+
+            string eventKey = string.Empty;
+            // 必要なイベントだけ処理する
+            switch (keyboardEvent.Key)
+            {
+                case "ArrowLeft":
+                    eventKey = "left";
+                    break;
+                case "ArrowUp":
+                    eventKey = "up";
+                    break;
+                case "ArrowRight":
+                    eventKey = "right";
+                    break;
+                case "ArrowDown":
+                    eventKey = "down";
+                    break;
+                case "Home":
+                    eventKey = "home";
+                    break;
+                case "End":
+                    eventKey = "end";
+                    break;
+                case "Shift":
+                    eventKey = KeyCode.LeftShift.ToString();
+                    break;
+                case "Control":
+                    eventKey = KeyCode.LeftControl.ToString();
+                    break;
+                default:
+                    break;
+            }
+
+            if (!string.IsNullOrEmpty(eventModifiers))
+            {
+                // Ctrl + A : SelectAll Event
+                if (keyboardEvent.Key == "a" || keyboardEvent.Key == "A")
+                {
+                    eventKey = KeyCode.A.ToString();
+                }
+            }
+
+            if (!string.IsNullOrEmpty(eventKey))
+            {
+                eventKeyString = eventModifiers + eventKey;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
         private void KeyboardDownHandler(WebGLInput instance, KeyboardEvent keyboardEvent)
         {
             if (instance == null || id != keyboardEvent.Id)
@@ -380,50 +440,10 @@ namespace WebGLSupport
                 return;
             }
 
-            string eventKey = string.Empty;
-            eventKey += keyboardEvent.ShiftKey ? "#" : "";
-            eventKey += keyboardEvent.CtrlKey ? "^" : "";
-            eventKey += keyboardEvent.AltKey ? "&" : "";
-
-            switch (keyboardEvent.Key)
+            if (TryGetKeyboardEventKeyString(keyboardEvent, out var eventKeyString))
             {
-                case "ArrowLeft":
-                    eventKey += "left";
-                    break;
-                case "ArrowUp":
-                    eventKey += "up";
-                    break;
-                case "ArrowRight":
-                    eventKey += "right";
-                    break;
-                case "ArrowDown":
-                    eventKey += "down";
-                    break;
-                case "Home":
-                    eventKey += "home";
-                    break;
-                case "End":
-                    eventKey += "end";
-                    break;
-                case "Shift":
-                    eventKey += KeyCode.LeftShift.ToString();
-                    break;
-                case "Control":
-                    eventKey += KeyCode.LeftControl.ToString();
-                    break;
-                default:
-                    break;
+                instance.input.CreateKeyEvent(Event.KeyboardEvent(eventKeyString));
             }
-
-            if (eventKey != string.Empty)
-            {
-                if (keyboardEvent.Key == "a" || keyboardEvent.Key == "A")
-                {
-                    eventKey += KeyCode.A.ToString();
-                }
-            }
-
-            instance.input.CreateKeyEvent(Event.KeyboardEvent(eventKey));
 
             int startPos = instance.input.selectionAnchorPosition;
             int endPos = instance.input.selectionFocusPosition;
