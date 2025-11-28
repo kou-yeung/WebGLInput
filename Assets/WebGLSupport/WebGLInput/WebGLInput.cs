@@ -546,6 +546,38 @@ namespace WebGLSupport
         }
 
         /// <summary>
+        /// Clear this input field text completely.
+        /// (Both unity and HTML sides)
+        /// </summary>
+        public void Clear()
+        {
+            // Clear Unity side
+            if (input != null)
+            {
+                input.text = string.Empty;
+            }
+
+            // Clear HTML element if exists
+            if (instances.ContainsKey(id))
+            {
+                WebGLInputPlugin.WebGLInputText(id, string.Empty);
+            }
+        }
+
+
+        /// <summary>
+        /// Clear all HTML input elements and Unity input fields.
+        /// Ensures both Unity and HTML sides are cleared.
+        /// </summary>
+        public static void ClearAll()
+        {
+            foreach (var instance in instances.Values)
+            {
+                instance.Clear();
+            }
+        }
+
+        /// <summary>
         /// to manage tab focus
         /// base on scene position
         /// </summary>
