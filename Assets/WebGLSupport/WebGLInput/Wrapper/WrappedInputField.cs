@@ -86,6 +86,14 @@ namespace WebGLSupport
             }
         }
 
+        public bool interactable
+        {
+            get
+            {
+                return input.interactable;
+            }
+        }
+
         public WrappedInputField(InputField input)
         {
             this.input = input;

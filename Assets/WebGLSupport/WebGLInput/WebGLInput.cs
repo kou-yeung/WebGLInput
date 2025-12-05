@@ -19,13 +19,21 @@ namespace WebGLSupport
         [DllImport("__Internal")]
         public static extern void WebGLInputInit();
         [DllImport("__Internal")]
-        public static extern int WebGLInputCreate(string canvasId, int x, int y, int width, int height, int fontsize, string text, string placeholder, bool isMultiLine, bool isPassword, bool isHidden, bool isMobile);
+        public static extern int WebGLInputCreate(string canvasId, int x, int y, int width, int height, int fontsize, string text, string placeholder, bool isMultiLine, bool isPassword, bool isHidden, bool isMobile, string autoComplete);
+        [DllImport("__Internal")]
+        public static extern void WebGLInputUpdateRect(int id, string canvasId, int x, int y, int width, int height, int fontsize,  bool isMultiLine, bool isMobile) ;
 
         [DllImport("__Internal")]
         public static extern void WebGLInputEnterSubmit(int id, bool flag);
 
         [DllImport("__Internal")]
         public static extern void WebGLInputTab(int id, Action<int, int> cb);
+
+        [DllImport("__Internal")]
+        public static extern void WebGLInputEnablePointerEvents(int id);
+
+        [DllImport("__Internal")]
+        public static extern void WebGLInputDisablePointerEvents(int id);
 
         [DllImport("__Internal")]
         public static extern void WebGLInputFocus(int id);
@@ -78,10 +86,13 @@ namespace WebGLSupport
 #endif
 #else
         public static void WebGLInputInit() { }
-        public static int WebGLInputCreate(string canvasId, int x, int y, int width, int height, int fontsize, string text, string placeholder, bool isMultiLine, bool isPassword, bool isHidden, bool isMobile) { return 0; }
+        public static int WebGLInputCreate(string canvasId, int x, int y, int width, int height, int fontsize, string text, string placeholder, bool isMultiLine, bool isPassword, bool isHidden, bool isMobile, string autoComplete) { return 0; }
+        public static void WebGLInputUpdateRect(int id, string canvasId, int x, int y, int width, int height, int fontsize, bool isMultiLine, bool isMobile) { }
         public static void WebGLInputEnterSubmit(int id, bool flag) { }
         public static void WebGLInputTab(int id, Action<int, int> cb) { }
         public static void WebGLInputFocus(int id) { }
+        public static void WebGLInputEnablePointerEvents(int id) { }
+        public static void WebGLInputDisablePointerEvents(int id) { }
         public static void WebGLInputOnFocus(int id, Action<int> cb) { }
         public static void WebGLInputOnBlur(int id, Action<int> cb) { }
         public static void WebGLInputOnValueChange(int id, Action<int, string> cb) { }
@@ -116,6 +127,16 @@ namespace WebGLSupport
         public bool enableTabText = false;
 #endif
 
+        public static bool IsInstanceActive()
+        {
+            foreach (var inst in instances)
+            {
+                if (inst.Value.input != null && inst.Value.input.isFocused) return true;
+            }
+
+            return false;
+        }
+
         static WebGLInput()
         {
             CanvasId = WebGLWindow.GetCanvasName();
@@ -128,6 +149,12 @@ namespace WebGLSupport
 
         [TooltipAttribute("show input element on canvas. this will make you select text by drag.")]
         public bool showHtmlElement = false;
+
+        [TooltipAttribute("This will spawn the text object as soon as its enabled. This helps for autofill of fields.")]
+        public bool keepElementActive = false;
+
+        [TooltipAttribute("This will add a \"autocomplete=\" tag to the HTML element. This helps for autofill of fields.")]
+        public string autoComplete = "";
 
         private IInputField Setup()
         {
@@ -164,6 +191,17 @@ namespace WebGLSupport
             OnKeyboardDown += KeyboardDownHandler;
         }
 
+        private void UpdateInputRect()
+        {
+            if (instances.ContainsKey(id))
+            {
+                var rect = GetElemetRect();
+                var fontSize = Mathf.Max(14, input.fontSize); // limit font size : 14 !!
+
+                WebGLInputPlugin.WebGLInputUpdateRect(id, WebGLInput.CanvasId, rect.x, rect.y, rect.width, rect.height, fontSize, input.lineType != LineType.SingleLine, Application.isMobilePlatform);
+            }
+        }
+
         /// <summary>
         /// Get the element rect of input
         /// </summary>
@@ -171,26 +209,34 @@ namespace WebGLSupport
         RectInt GetElemetRect()
         {
             var rect = input.GetScreenCoordinates();
-            // モバイルの場合、強制表示する
-            if (showHtmlElement || Application.isMobilePlatform)
-            {
-                var x = (int)(rect.x);
-                var y = (int)(Screen.height - (rect.y + rect.height));
-                return new RectInt(x, y, (int)rect.width, (int)rect.height);
-            }
-            else
-            {
-                var x = (int)(rect.x);
-                var y = (int)(Screen.height - (rect.y));
-                return new RectInt(x, y, (int)rect.width, (int)1);
-            }
+            //// モバイルの場合、強制表示する
+            var x = (int)(rect.x);
+            var y = (int)(Screen.height - (rect.y + rect.height));
+            return new RectInt(x, y, (int)rect.width, (int)rect.height);
         }
+
         /// <summary>
         /// 対象が選択されたとき
         /// </summary>
         /// <param name="eventData"></param>
         public void OnSelect()
         {
+            SpawnHTMLElement();
+
+
+            WebGLInputPlugin.WebGLInputFocus(id);
+            if (input.OnFocusSelectAll)
+            {
+                WebGLInputPlugin.WebGLInputSetSelectionRange(id, 0, input.text.Length);
+            }
+            else
+            {
+                WebGLInputPlugin.WebGLInputSetSelectionRange(id, input.caretPosition, input.caretPosition);
+            }
+
+        }
+
+        public void SpawnHTMLElement() {
             if (id != -1) throw new Exception("OnSelect : id != -1");
 
             var rect = GetElemetRect();
@@ -200,7 +246,7 @@ namespace WebGLSupport
 
             // モバイルの場合、強制表示する
             var isHidden = !(showHtmlElement || Application.isMobilePlatform);
-            id = WebGLInputPlugin.WebGLInputCreate(WebGLInput.CanvasId, rect.x, rect.y, rect.width, rect.height, fontSize, input.text, input.placeholder, input.lineType != LineType.SingleLine, isPassword, isHidden, Application.isMobilePlatform);
+            id = WebGLInputPlugin.WebGLInputCreate(WebGLInput.CanvasId, rect.x, rect.y, rect.width, rect.height, fontSize, input.text, input.placeholder, input.lineType != LineType.SingleLine, isPassword, isHidden, false, autoComplete);
 
             instances[id] = this;
             WebGLInputPlugin.WebGLInputEnterSubmit(id, input.lineType != LineType.MultiLineNewline);
@@ -213,19 +259,9 @@ namespace WebGLSupport
 
             // default value : https://www.w3schools.com/tags/att_input_maxlength.asp
             WebGLInputPlugin.WebGLInputMaxLength(id, (input.characterLimit > 0) ? input.characterLimit : 524288);
-            WebGLInputPlugin.WebGLInputFocus(id);
 #if WEBGLINPUT_TAB
             WebGLInputPlugin.WebGLInputEnableTabText(id, enableTabText);
 #endif
-            if (input.OnFocusSelectAll)
-            {
-                WebGLInputPlugin.WebGLInputSetSelectionRange(id, 0, input.text.Length);
-            }
-            else
-            {
-                WebGLInputPlugin.WebGLInputSetSelectionRange(id, input.caretPosition, input.caretPosition);
-            }
-
             WebGLWindow.OnBlurEvent += OnWindowBlur;
         }
 
@@ -460,7 +496,26 @@ namespace WebGLSupport
 
         void Update()
         {
-            if (input == null || !input.isFocused)
+            if (instances.ContainsKey(id))
+            {
+                UpdateInputRect();
+
+
+                if (Input.GetMouseButtonDown(1)) 
+                {
+                    WebGLInputPlugin.WebGLInputEnablePointerEvents(id);
+                }
+                if (!Input.GetMouseButton(1)) 
+                {
+                    WebGLInputPlugin.WebGLInputDisablePointerEvents(id);
+                }
+                if (input.interactable == false) 
+                {
+                    DeactivateInputField();
+                }
+            }
+
+            if (input == null || !input.isFocused || !input.interactable)
             {
                 CheckOutFocus();
                 return;
@@ -522,12 +577,22 @@ namespace WebGLSupport
         private void OnEnable()
         {
             WebGLInputTabFocus.Add(this);
+
+            if (keepElementActive && input.interactable == true && id == -1)
+            {
+                SpawnHTMLElement();
+            }
         }
+
         private void OnDisable()
         {
             WebGLInputTabFocus.Remove(this);
-            DeactivateInputField();
+            if (!keepElementActive)
+            {
+                DeactivateInputField();
+            }
         }
+
         public int CompareTo(WebGLInput other)
         {
             var a = input.GetScreenCoordinates();

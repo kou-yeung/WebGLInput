@@ -138,6 +138,14 @@ namespace WebGLSupport
             }
         }
 
+        public bool interactable
+        {
+            get
+            {
+                return input.interactable;
+            }
+        }
+
         public WrappedTMPInputField(TMP_InputField input)
         {
             this.input = input;

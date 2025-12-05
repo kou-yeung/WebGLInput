@@ -36,6 +36,7 @@ namespace WebGLSupport
         bool ReadOnly { get; }
         bool OnFocusSelectAll { get; }
         bool EnableMobileSupport { get; }
+        bool interactable { get; }
 
         Rect GetScreenCoordinates();
 

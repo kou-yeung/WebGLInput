@@ -134,6 +134,14 @@ namespace WebGLSupport
             }
         }
 
+        public bool interactable
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         public WrappedUIToolkit(WebGLUIToolkitTextField input)
         {
             this.input = input.TextField;
