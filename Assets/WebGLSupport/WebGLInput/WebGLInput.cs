@@ -19,7 +19,7 @@ namespace WebGLSupport
         [DllImport("__Internal")]
         public static extern void WebGLInputInit();
         [DllImport("__Internal")]
-        public static extern int WebGLInputCreate(string canvasId, int x, int y, int width, int height, int fontsize, string text, string placeholder, bool isMultiLine, bool isPassword, bool isHidden, bool isMobile);
+        public static extern int WebGLInputCreate(string canvasId, int x, int y, int width, int height, int fontsize, string text, string placeholder, bool isMultiLine, bool isPassword, bool isHidden, bool isMobile, string autoComplete);
 
         [DllImport("__Internal")]
         public static extern void WebGLInputEnterSubmit(int id, bool flag);
@@ -78,7 +78,7 @@ namespace WebGLSupport
 #endif
 #else
         public static void WebGLInputInit() { }
-        public static int WebGLInputCreate(string canvasId, int x, int y, int width, int height, int fontsize, string text, string placeholder, bool isMultiLine, bool isPassword, bool isHidden, bool isMobile) { return 0; }
+        public static int WebGLInputCreate(string canvasId, int x, int y, int width, int height, int fontsize, string text, string placeholder, bool isMultiLine, bool isPassword, bool isHidden, bool isMobile, string autoComplete) { return 0; }
         public static void WebGLInputEnterSubmit(int id, bool flag) { }
         public static void WebGLInputTab(int id, Action<int, int> cb) { }
         public static void WebGLInputFocus(int id) { }
@@ -138,6 +138,10 @@ namespace WebGLSupport
 
         [TooltipAttribute("show input element on canvas. this will make you select text by drag.")]
         public bool showHtmlElement = false;
+
+
+        [TooltipAttribute("This will add a \"autocomplete=\" tag to the HTML element. This helps for autofill of fields.")]
+        public string autoComplete = "";
 
         private IInputField Setup()
         {
@@ -210,7 +214,7 @@ namespace WebGLSupport
 
             // モバイルの場合、強制表示する
             var isHidden = !(showHtmlElement || Application.isMobilePlatform);
-            id = WebGLInputPlugin.WebGLInputCreate(WebGLInput.CanvasId, rect.x, rect.y, rect.width, rect.height, fontSize, input.text, input.placeholder, input.lineType != LineType.SingleLine, isPassword, isHidden, Application.isMobilePlatform);
+            id = WebGLInputPlugin.WebGLInputCreate(WebGLInput.CanvasId, rect.x, rect.y, rect.width, rect.height, fontSize, input.text, input.placeholder, input.lineType != LineType.SingleLine, isPassword, isHidden, false, autoComplete);
 
             instances[id] = this;
             WebGLInputPlugin.WebGLInputEnterSubmit(id, input.lineType != LineType.MultiLineNewline);

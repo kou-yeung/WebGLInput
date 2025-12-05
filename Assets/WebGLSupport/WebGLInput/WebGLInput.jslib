@@ -15,7 +15,7 @@ var WebGLInput = {
             if(typeof Runtime === "undefined") Runtime = { dynCall : dynCall }
         }
     },
-    WebGLInputCreate: function (canvasId, x, y, width, height, fontsize, text, placeholder, isMultiLine, isPassword, isHidden, isMobile) {
+    WebGLInputCreate: function (canvasId, x, y, width, height, fontsize, text, placeholder, isMultiLine, isPassword, isHidden, isMobile, autoComplete) {
 
         var container = document.getElementById(UTF8ToString(canvasId));
         var canvas = container.getElementsByTagName('canvas')[0];
@@ -43,6 +43,7 @@ var WebGLInput = {
 
         var input = document.createElement(isMultiLine?"textarea":"input");
         input.style.position = "absolute";
+        input.autocomplete = UTF8ToString(autoComplete);
 
         if(isMobile) {
             input.style.bottom = 1 + "vh";
