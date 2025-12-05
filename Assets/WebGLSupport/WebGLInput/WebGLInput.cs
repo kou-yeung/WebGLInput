@@ -116,6 +116,16 @@ namespace WebGLSupport
         public bool enableTabText = false;
 #endif
 
+        public static bool IsInstanceActive()
+        {
+            foreach (var inst in instances)
+            {
+                if (inst.Value.input != null && inst.Value.input.isFocused) return true;
+            }
+
+            return false;
+        }
+
         static WebGLInput()
         {
             CanvasId = WebGLWindow.GetCanvasName();
