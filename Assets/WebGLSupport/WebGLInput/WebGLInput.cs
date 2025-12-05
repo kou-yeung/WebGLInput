@@ -104,7 +104,7 @@ namespace WebGLSupport
 #endif
     }
 
-    public class WebGLInput : MonoBehaviour, IComparable<WebGLInput>
+    public class WebGLInput : MonoBehaviour, IDeselectHandler, IComparable<WebGLInput>
     {
         public static event KeyboardEventHandler OnKeyboardDown;
         public static event KeyboardEventHandler OnKeyboardUp;
@@ -545,7 +545,10 @@ namespace WebGLSupport
             if (current != null) return;
             WebGLInputPlugin.WebGLInputForceBlur(id);   // Input ではないし、キーボードを閉じる
         }
-
+        void IDeselectHandler.OnDeselect(BaseEventData eventData)
+        {
+            DeactivateInputField();
+        }
         /// <summary>
         /// to manage tab focus
         /// base on scene position
