@@ -359,7 +359,7 @@ namespace WebGLSupport
             if (!instances.ContainsKey(id)) return;
             var instance = instances[id];
 
-            // mode : keydown(1) keyup(3)
+            // mode : keydown(1) keyup(2)
             var cb = mode switch
             {
                 1 => OnKeyboardDown,
@@ -367,7 +367,7 @@ namespace WebGLSupport
                 _ => default
             };
 
-            if (mode == 1 && key != null)
+            if (key != null)
             {
                 cb?.Invoke(instance, new KeyboardEvent(id, key, code, shiftKey != 0, ctrlKey != 0, altKey != 0));
             }
@@ -526,6 +526,7 @@ namespace WebGLSupport
         private void OnDisable()
         {
             WebGLInputTabFocus.Remove(this);
+            DeactivateInputField();
         }
         public int CompareTo(WebGLInput other)
         {
