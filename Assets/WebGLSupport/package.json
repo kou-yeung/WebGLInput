@@ -1,7 +1,7 @@
 {
   "name": "com.github.kou-yeung.webglinput",
   "displayName": "WebGLInput",
-  "version": "1.4.2",
+  "version": "1.5.0",
   "unity": "2023.2",
   "description": "IME for Unity WebGL",
   "license": "MIT",
